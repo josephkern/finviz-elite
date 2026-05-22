@@ -228,3 +228,279 @@ class PortfolioOrder(Enum):
     COST = "cost"
     MARKET_VALUE = "marketvalue"
     GAIN_PCT = "gainpct"
+
+
+class ScreenerColumn(Enum):
+    """Screener export columns, mapped to their ``c=`` index.
+
+    Used to subset and reorder the exported columns. Indices and labels
+    match the Finviz screener custom view (v=152). Columns 90-99 are
+    intraday performance; 100-124 are ETF-specific fields.
+    """
+
+    NO = 0
+    TICKER = 1
+    COMPANY = 2
+    SECTOR = 3
+    INDUSTRY = 4
+    COUNTRY = 5
+    MARKET_CAP = 6
+    PE = 7
+    FORWARD_PE = 8
+    PEG = 9
+    PS = 10
+    PB = 11
+    P_CASH = 12
+    P_FREE_CASH_FLOW = 13
+    DIVIDEND_YIELD = 14
+    PAYOUT_RATIO = 15
+    EPS_TTM = 16
+    EPS_GROWTH_THIS_YEAR = 17
+    EPS_GROWTH_NEXT_YEAR = 18
+    EPS_GROWTH_PAST_5Y = 19
+    EPS_GROWTH_NEXT_5Y = 20
+    SALES_GROWTH_PAST_5Y = 21
+    EPS_GROWTH_QOQ = 22
+    SALES_GROWTH_QOQ = 23
+    SHARES_OUTSTANDING = 24
+    SHARES_FLOAT = 25
+    INSIDER_OWNERSHIP = 26
+    INSIDER_TRANSACTIONS = 27
+    INSTITUTIONAL_OWNERSHIP = 28
+    INSTITUTIONAL_TRANSACTIONS = 29
+    SHORT_FLOAT = 30
+    SHORT_RATIO = 31
+    RETURN_ON_ASSETS = 32
+    RETURN_ON_EQUITY = 33
+    RETURN_ON_INVESTED_CAPITAL = 34
+    CURRENT_RATIO = 35
+    QUICK_RATIO = 36
+    LT_DEBT_EQUITY = 37
+    TOTAL_DEBT_EQUITY = 38
+    GROSS_MARGIN = 39
+    OPERATING_MARGIN = 40
+    PROFIT_MARGIN = 41
+    PERF_WEEK = 42
+    PERF_MONTH = 43
+    PERF_QUARTER = 44
+    PERF_HALF_YEAR = 45
+    PERF_YEAR = 46
+    PERF_YTD = 47
+    BETA = 48
+    AVERAGE_TRUE_RANGE = 49
+    VOLATILITY_WEEK = 50
+    VOLATILITY_MONTH = 51
+    SMA_20 = 52
+    SMA_50 = 53
+    SMA_200 = 54
+    HIGH_50D = 55
+    LOW_50D = 56
+    HIGH_52W = 57
+    LOW_52W = 58
+    RSI_14 = 59
+    CHANGE_FROM_OPEN = 60
+    GAP = 61
+    ANALYST_RECOM = 62
+    AVERAGE_VOLUME = 63
+    RELATIVE_VOLUME = 64
+    PRICE = 65
+    CHANGE = 66
+    VOLUME = 67
+    EARNINGS_DATE = 68
+    TARGET_PRICE = 69
+    IPO_DATE = 70
+    AFTER_HOURS_CLOSE = 71
+    AFTER_HOURS_CHANGE = 72
+    BOOK_PER_SH = 73
+    CASH_PER_SH = 74
+    DIVIDEND = 75
+    EMPLOYEES = 76
+    EPS_NEXT_Q = 77
+    INCOME = 78
+    INDEX = 79
+    OPTIONABLE = 80
+    PREV_CLOSE = 81
+    SALES = 82
+    SHORTABLE = 83
+    SHORT_INTEREST = 84
+    FLOAT_PCT = 85
+    OPEN = 86
+    HIGH = 87
+    LOW = 88
+    TRADES = 89
+    PERF_1MIN = 90
+    PERF_2MIN = 91
+    PERF_3MIN = 92
+    PERF_5MIN = 93
+    PERF_10MIN = 94
+    PERF_15MIN = 95
+    PERF_30MIN = 96
+    PERF_1H = 97
+    PERF_2H = 98
+    PERF_4H = 99
+    ASSET_TYPE = 100
+    ETF_TYPE = 101
+    REGION = 102
+    SINGLE_CATEGORY = 103
+    SECTOR_THEME = 104
+    TAGS = 105
+    ACTIVE_PASSIVE = 106
+    NET_EXPENSE_RATIO = 107
+    TOTAL_HOLDINGS = 108
+    ASSETS_UNDER_MANAGEMENT = 109
+    NET_ASSET_VALUE = 110
+    NET_ASSET_VALUE_PCT = 111
+    NET_FLOWS_1M = 112
+    NET_FLOWS_PCT_1M = 113
+    NET_FLOWS_3M = 114
+    NET_FLOWS_PCT_3M = 115
+    NET_FLOWS_YTD = 116
+    NET_FLOWS_PCT_YTD = 117
+    NET_FLOWS_1Y = 118
+    NET_FLOWS_PCT_1Y = 119
+    RETURN_1Y = 120
+    RETURN_3Y = 121
+    RETURN_5Y = 122
+    RETURN_10Y = 123
+    RETURN_SINCE_INCEPTION = 124
+    ALL_TIME_HIGH = 125
+    ALL_TIME_LOW = 126
+    EPS_SURPRISE = 127
+    REVENUE_SURPRISE = 128
+    EXCHANGE = 129
+    DIVIDEND_TTM = 130
+    DIVIDEND_EX_DATE = 131
+    EPS_YOY_TTM = 132
+    SALES_YOY_TTM = 133
+    RANGE_52W = 134
+    NEWS_TIME = 135
+    NEWS_URL = 136
+    NEWS_TITLE = 137
+    PERF_3Y = 138
+    PERF_5Y = 139
+    PERF_10Y = 140
+    AFTER_HOURS_VOLUME = 141
+    EPS_GROWTH_PAST_3Y = 142
+    SALES_GROWTH_PAST_3Y = 143
+    ENTERPRISE_VALUE = 144
+    EV_EBITDA = 145
+    EV_SALES = 146
+    DIVIDEND_GROWTH_1Y = 147
+    DIVIDEND_GROWTH_3Y = 148
+    DIVIDEND_GROWTH_5Y = 149
+    DAILY_DIGEST = 150
+
+
+# --- Screener filters (f=) ---------------------------------------------
+# Finviz has ~70 filter categories; these cover the common "descriptive"
+# ones. Every token below is verified against the live screener export.
+# The long tail of filters can still be passed to screener() as raw
+# strings alongside these enum members.
+
+
+class FilterExchange(Enum):
+    """Screener exchange filter, mapped to its ``f=`` token."""
+
+    AMEX = "exch_amex"
+    NASDAQ = "exch_nasd"
+    NYSE = "exch_nyse"
+
+
+class FilterIndex(Enum):
+    """Screener index-membership filter, mapped to its ``f=`` token."""
+
+    SP500 = "idx_sp500"
+    DJIA = "idx_dji"
+    NASDAQ100 = "idx_ndx"
+    RUSSELL2000 = "idx_rut"
+
+
+class FilterSector(Enum):
+    """Screener sector filter, mapped to its ``f=`` token."""
+
+    BASIC_MATERIALS = "sec_basicmaterials"
+    COMMUNICATION_SERVICES = "sec_communicationservices"
+    CONSUMER_CYCLICAL = "sec_consumercyclical"
+    CONSUMER_DEFENSIVE = "sec_consumerdefensive"
+    ENERGY = "sec_energy"
+    FINANCIAL = "sec_financial"
+    HEALTHCARE = "sec_healthcare"
+    INDUSTRIALS = "sec_industrials"
+    REAL_ESTATE = "sec_realestate"
+    TECHNOLOGY = "sec_technology"
+    UTILITIES = "sec_utilities"
+
+
+class FilterMarketCap(Enum):
+    """Screener market-cap filter, mapped to its ``f=`` token."""
+
+    MEGA = "cap_mega"     # $200bln and above
+    LARGE = "cap_large"   # $10bln to $200bln
+    MID = "cap_mid"       # $2bln to $10bln
+    SMALL = "cap_small"   # $300mln to $2bln
+    MICRO = "cap_micro"   # $50mln to $300mln
+    NANO = "cap_nano"     # under $50mln
+
+
+class ScreenerOrder(Enum):
+    """Sortable screener columns, mapped to their ``o=`` name token.
+
+    Member names mirror ScreenerColumn. This is a curated subset of the
+    151 screener columns: the commonly-sorted ones whose ``o=`` token
+    was verified against the live screener export (or shares the token
+    namespace verified for the groups export). Columns with no useful
+    sort (news fields, ETF metadata, etc.) are intentionally omitted.
+    An unrecognised ``o=`` value is silently ignored by Finviz, so
+    passing a real ScreenerOrder member is the only way to guarantee
+    a sort.
+    """
+
+    TICKER = "ticker"
+    COMPANY = "company"
+    SECTOR = "sector"
+    INDUSTRY = "industry"
+    COUNTRY = "country"
+    MARKET_CAP = "marketcap"
+    PE = "pe"
+    FORWARD_PE = "forwardpe"
+    PEG = "peg"
+    PS = "ps"
+    PB = "pb"
+    P_CASH = "pc"
+    P_FREE_CASH_FLOW = "pfcf"
+    DIVIDEND_YIELD = "dividendyield"
+    PAYOUT_RATIO = "payoutratio"
+    EPS_TTM = "eps"
+    EPS_GROWTH_THIS_YEAR = "epsyoy"
+    EPS_GROWTH_PAST_5Y = "eps5years"
+    EPS_GROWTH_NEXT_5Y = "estltgrowth"
+    SALES_GROWTH_PAST_5Y = "sales5years"
+    INSIDER_OWNERSHIP = "insiderown"
+    INSTITUTIONAL_OWNERSHIP = "instown"
+    SHORT_FLOAT = "shortinterestshare"
+    RETURN_ON_ASSETS = "roa"
+    RETURN_ON_EQUITY = "roe"
+    RETURN_ON_INVESTED_CAPITAL = "roi"
+    LT_DEBT_EQUITY = "ltdebteq"
+    GROSS_MARGIN = "grossmargin"
+    OPERATING_MARGIN = "opermargin"
+    PROFIT_MARGIN = "netmargin"
+    PERF_WEEK = "perf1w"
+    PERF_MONTH = "perf4w"
+    PERF_QUARTER = "perf13w"
+    PERF_HALF_YEAR = "perf26w"
+    PERF_YEAR = "perf52w"
+    PERF_YTD = "perfytd"
+    PERF_3Y = "perf3y"
+    BETA = "beta"
+    SMA_20 = "sma20"
+    SMA_50 = "sma50"
+    SMA_200 = "sma200"
+    GAP = "gap"
+    ANALYST_RECOM = "recom"
+    AVERAGE_VOLUME = "averagevolume"
+    RELATIVE_VOLUME = "relativevolume"
+    PRICE = "price"
+    CHANGE = "change"
+    VOLUME = "volume"
+    TARGET_PRICE = "targetprice"

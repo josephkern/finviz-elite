@@ -1,6 +1,7 @@
 import requests
 import os
 
+from enum import Enum
 from typing import List, Optional, Union
 
 from dotenv import load_dotenv
@@ -16,6 +17,8 @@ from ._enums import (
     PortfolioOrder,
     QuotePeriod,
     QuoteRange,
+    ScreenerColumn,
+    ScreenerOrder,
     TICKER_FEEDS,
 )
 
@@ -233,6 +236,57 @@ def portfolio(
     options = f"pid={pid}"
     if columns:
         options += "&c=" + ",".join(str(col.value) for col in columns)
+    if order:
+        options += f"&o={'-' if descending else ''}{order.value}"
+
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
+
+
+def screener(
+    filters: Optional[List[Union[str, Enum]]] = None,
+    columns: Optional[List[ScreenerColumn]] = None,
+    order: Optional[ScreenerOrder] = None,
+    descending: bool = False,
+) -> str:
+    """
+    Run the Finviz stock screener and download the result as CSV.
+
+    Arguments:
+        filters: optional screening criteria, a list of filter tokens.
+            Each item may be a filter enum member (FilterSector,
+            FilterExchange, FilterIndex, FilterMarketCap) or a raw
+            Finviz token string for the long tail of filters not
+            covered by an enum (e.g. "fa_div_pos"). When omitted, the
+            whole market is returned.
+        columns: optional subset of columns to export, as a list of
+            ScreenerColumn members. The export follows the given order.
+            When omitted, Finviz returns its default column set.
+        order: optional column to sort by, a ScreenerOrder member.
+            When omitted, Finviz returns its default order.
+        descending: sort descending instead of ascending. Only has an
+            effect when 'order' is given; passing it alone raises
+            ValueError.
+
+    Examples:
+        screener(filters=[FilterSector.TECHNOLOGY, FilterMarketCap.LARGE])
+        screener(filters=["fa_div_pos", FilterSector.TECHNOLOGY],
+                 columns=[ScreenerColumn.TICKER, ScreenerColumn.PRICE])
+        screener(order=ScreenerOrder.MARKET_CAP, descending=True)
+
+    Example URL: https://elite.finviz.com/export?v=152&c=0,1,2&f=sec_technology
+    """
+    if descending and order is None:
+        raise ValueError("descending=True requires an 'order' to sort by.")
+
+    # v=152 is the custom-columns view; it is what makes c= take effect.
+    data = "export"
+    options = "v=152"
+    if columns:
+        options += "&c=" + ",".join(str(col.value) for col in columns)
+    if filters:
+        tokens = [f.value if isinstance(f, Enum) else str(f) for f in filters]
+        options += "&f=" + ",".join(tokens)
     if order:
         options += f"&o={'-' if descending else ''}{order.value}"
 
