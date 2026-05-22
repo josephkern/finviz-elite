@@ -1,6 +1,9 @@
-from ._core import quote, news
+from ._core import NewsFeed, QuotePeriod, QuoteRange, news, quote
 
 __all__ = [
-    "quote",
+    "NewsFeed",
+    "QuotePeriod",
+    "QuoteRange",
     "news",
+    "quote",
 ]
