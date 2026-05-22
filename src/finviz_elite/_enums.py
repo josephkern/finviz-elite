@@ -146,6 +146,44 @@ class GroupColumn(Enum):
     STOCKS = 26
 
 
+class GroupOrder(Enum):
+    """Sortable group columns, mapped to their ``o=`` name token.
+
+    Every token is verified against the live grp_export endpoint.
+    Member names mirror GroupColumn (minus NO, the row index, which
+    is not a meaningful sort key). An unrecognised ``o=`` value is
+    silently ignored, so passing a real GroupOrder member is the only
+    way to guarantee a sort.
+    """
+
+    NAME = "name"
+    MARKET_CAP = "marketcap"
+    PE = "pe"
+    FORWARD_PE = "forwardpe"
+    PEG = "peg"
+    PS = "ps"
+    PB = "pb"
+    PC = "pc"
+    P_FREE_CASH_FLOW = "pfcf"
+    DIVIDEND_YIELD = "dividendyield"
+    EPS_GROWTH_PAST_5Y = "eps5years"
+    EPS_GROWTH_NEXT_5Y = "estltgrowth"
+    SALES_GROWTH_PAST_5Y = "sales5years"
+    FLOAT_SHORT = "shortinterestshare"
+    PERF_WEEK = "perf1w"
+    PERF_MONTH = "perf4w"
+    PERF_QUARTER = "perf13w"
+    PERF_HALF_YEAR = "perf26w"
+    PERF_YEAR = "perf52w"
+    PERF_YTD = "perfytd"
+    ANALYST_RECOM = "recom"
+    AVG_VOLUME = "averagevolume"
+    RELATIVE_VOLUME = "relativevolume"
+    CHANGE = "change"
+    VOLUME = "volume"
+    STOCKS = "count"
+
+
 class PortfolioColumn(Enum):
     """Portfolio export columns, mapped to their ``c=`` index.
 

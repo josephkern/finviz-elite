@@ -10,6 +10,11 @@ wheels/
 .venv
 .env
 
+# Editor files
+*.swp
+*.swo
+*~
+
 # mac
 .DS_Store
 

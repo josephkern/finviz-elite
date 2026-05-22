@@ -10,6 +10,7 @@ from ._enums import (
     FilingOrder,
     GroupBy,
     GroupColumn,
+    GroupOrder,
     NewsFeed,
     PortfolioColumn,
     PortfolioOrder,
@@ -83,7 +84,7 @@ def filings(
 def groups(
     by: GroupBy,
     columns: Optional[List[GroupColumn]] = None,
-    order: Optional[str] = None,
+    order: Optional[GroupOrder] = None,
     descending: bool = False,
 ) -> str:
     """
@@ -97,10 +98,8 @@ def groups(
         columns: optional subset of columns to export, as a list of
             GroupColumn members. The export follows the given order.
             When omitted, Finviz returns its default column set.
-        order: optional column to sort by, given as a Finviz column
-            name token (e.g. "marketcap", "name"). When omitted,
-            Finviz returns its default order. NOTE: o= accepts name
-            tokens only -- a numeric index is silently ignored.
+        order: optional column to sort by, a GroupOrder member.
+            When omitted, Finviz returns its default order.
         descending: sort descending instead of ascending. Only has an
             effect when 'order' is given; passing it alone raises
             ValueError.
@@ -109,7 +108,7 @@ def groups(
         groups(GroupBy.SECTOR)
         groups(GroupBy.INDUSTRY, columns=[GroupColumn.NAME,
                                           GroupColumn.MARKET_CAP])
-        groups(GroupBy.SECTOR, order="marketcap", descending=True)
+        groups(GroupBy.SECTOR, order=GroupOrder.MARKET_CAP, descending=True)
 
     Example URL: https://elite.finviz.com/grp_export?g=sector&v=152&c=0,1,2
     """
@@ -122,7 +121,7 @@ def groups(
     if columns:
         options += "&c=" + ",".join(str(col.value) for col in columns)
     if order:
-        options += f"&o={'-' if descending else ''}{order}"
+        options += f"&o={'-' if descending else ''}{order.value}"
 
     url = _build_url(FINVIZ_URL_BASE, data, options)
     return _get_url(url)
