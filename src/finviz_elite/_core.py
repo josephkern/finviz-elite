@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 from dotenv import load_dotenv
 
 from ._enums import (
+    FilingFilter,
+    FilingOrder,
     NewsFeed,
     PortfolioColumn,
     PortfolioOrder,
@@ -35,6 +37,46 @@ def _get_url(url: str) -> str:
     response.raise_for_status()
     return response.text
 
+
+def filings(
+    ticker: str,
+    filter: Optional[FilingFilter] = None,
+    order: Optional[FilingOrder] = None,
+    descending: bool = False,
+) -> str:
+    """
+    Download a stock's latest SEC filings as CSV.
+
+    Arguments:
+        ticker: stock symbol, e.g. "MSFT".
+        filter: optional filing category, a FilingFilter member (e.g.
+            FilingFilter.ANNUAL_QUARTERLY_CURRENT). When omitted, all
+            filing types are returned.
+        order: optional column to sort by, a FilingOrder member.
+            When omitted, Finviz returns its default order.
+        descending: sort descending instead of ascending. Only has an
+            effect when 'order' is given; passing it alone raises
+            ValueError.
+
+    Examples:
+        filings("MSFT")
+        filings("MSFT", filter=FilingFilter.PROXY_MATERIALS)
+        filings("MSFT", order=FilingOrder.FILING_DATE, descending=True)
+
+    Example URL: https://elite.finviz.com/export/latest-filings?t=MSFT&o=-filingDate
+    """
+    if descending and order is None:
+        raise ValueError("descending=True requires an 'order' to sort by.")
+
+    data = "export/latest-filings"
+    options = f"t={ticker}"
+    if filter:
+        options += f"&f={filter.value}"
+    if order:
+        options += f"&o={'-' if descending else ''}{order.value}"
+
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
 
 def news(feed: NewsFeed, tickers: Optional[Union[str, List[str]]] = None) -> str:
     """

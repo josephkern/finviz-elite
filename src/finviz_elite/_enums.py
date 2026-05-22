@@ -67,6 +67,37 @@ class QuotePeriod(Enum):
     MONTHLY = "m"
 
 
+class FilingFilter(Enum):
+    """SEC filing categories for the latest-filings export, mapped to
+    their ``f=`` query value.
+
+    When omitted from ``filings()`` the export returns all filing
+    types. An unrecognised ``f=`` value is silently ignored, so passing
+    a real FilingFilter member is the only way to guarantee a filter.
+    """
+
+    ANNUAL_QUARTERLY_CURRENT = "annual-quarterly-current"
+    INSIDER_EQUITY = "insider-equity"
+    BENEFICIAL_OWNERSHIP = "beneficial-ownership"
+    EXEMPT_OFFERINGS = "exempt-offerings"
+    REGISTRATION_STATEMENTS = "registration-statements"
+    FILING_REVIEW_CORRESPONDENCE = "filing-review-correspondence"
+    SEC_ORDERS_NOTICES = "sec-orders-notices"
+    PROXY_MATERIALS = "proxy-materials"
+    TENDER_OFFERS = "tender-offers"
+    TRUST_INDENTURES = "trust-indentures"
+
+
+class FilingOrder(Enum):
+    """Sortable columns for the latest-filings export, mapped to their
+    ``o=`` query value.
+    """
+
+    FILING_DATE = "filingDate"
+    REPORT_DATE = "reportDate"
+    FORM = "form"
+
+
 class PortfolioColumn(Enum):
     """Portfolio export columns, mapped to their ``c=`` index.
 
