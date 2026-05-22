@@ -98,6 +98,54 @@ class FilingOrder(Enum):
     FORM = "form"
 
 
+class GroupBy(Enum):
+    """Finviz group type, mapped to its ``g=`` query value.
+
+    Selects how stocks are aggregated for the groups export.
+    """
+
+    SECTOR = "sector"
+    INDUSTRY = "industry"
+    COUNTRY = "country"
+    CAPITALIZATION = "capitalization"
+
+
+class GroupColumn(Enum):
+    """Group export columns, mapped to their ``c=`` index.
+
+    Used to subset and order the exported columns. Indices and labels
+    match the live grp_export header (custom view, v=152).
+    """
+
+    NO = 0
+    NAME = 1
+    MARKET_CAP = 2
+    PE = 3
+    FORWARD_PE = 4
+    PEG = 5
+    PS = 6
+    PB = 7
+    PC = 8
+    P_FREE_CASH_FLOW = 9
+    DIVIDEND_YIELD = 10
+    EPS_GROWTH_PAST_5Y = 11
+    EPS_GROWTH_NEXT_5Y = 12
+    SALES_GROWTH_PAST_5Y = 13
+    FLOAT_SHORT = 14
+    PERF_WEEK = 15
+    PERF_MONTH = 16
+    PERF_QUARTER = 17
+    PERF_HALF_YEAR = 18
+    PERF_YEAR = 19
+    PERF_YTD = 20
+    ANALYST_RECOM = 21
+    AVG_VOLUME = 22
+    RELATIVE_VOLUME = 23
+    CHANGE = 24
+    VOLUME = 25
+    STOCKS = 26
+
+
 class PortfolioColumn(Enum):
     """Portfolio export columns, mapped to their ``c=`` index.
 

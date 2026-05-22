@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from ._enums import (
     FilingFilter,
     FilingOrder,
+    GroupBy,
+    GroupColumn,
     NewsFeed,
     PortfolioColumn,
     PortfolioOrder,
@@ -77,6 +79,54 @@ def filings(
 
     url = _build_url(FINVIZ_URL_BASE, data, options)
     return _get_url(url)
+
+def groups(
+    by: GroupBy,
+    columns: Optional[List[GroupColumn]] = None,
+    order: Optional[str] = None,
+    descending: bool = False,
+) -> str:
+    """
+    Download Finviz group statistics as CSV.
+
+    Groups aggregate the whole market by sector, industry, country or
+    market-cap band, with averaged valuation/performance metrics.
+
+    Arguments:
+        by: which grouping to pull, a GroupBy member.
+        columns: optional subset of columns to export, as a list of
+            GroupColumn members. The export follows the given order.
+            When omitted, Finviz returns its default column set.
+        order: optional column to sort by, given as a Finviz column
+            name token (e.g. "marketcap", "name"). When omitted,
+            Finviz returns its default order. NOTE: o= accepts name
+            tokens only -- a numeric index is silently ignored.
+        descending: sort descending instead of ascending. Only has an
+            effect when 'order' is given; passing it alone raises
+            ValueError.
+
+    Examples:
+        groups(GroupBy.SECTOR)
+        groups(GroupBy.INDUSTRY, columns=[GroupColumn.NAME,
+                                          GroupColumn.MARKET_CAP])
+        groups(GroupBy.SECTOR, order="marketcap", descending=True)
+
+    Example URL: https://elite.finviz.com/grp_export?g=sector&v=152&c=0,1,2
+    """
+    if descending and order is None:
+        raise ValueError("descending=True requires an 'order' to sort by.")
+
+    # v=152 is the custom-columns view; it is what makes c= take effect.
+    data = "grp_export"
+    options = f"g={by.value}&v=152"
+    if columns:
+        options += "&c=" + ",".join(str(col.value) for col in columns)
+    if order:
+        options += f"&o={'-' if descending else ''}{order}"
+
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
+
 
 def news(feed: NewsFeed, tickers: Optional[Union[str, List[str]]] = None) -> str:
     """

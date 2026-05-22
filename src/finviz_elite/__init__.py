@@ -1,7 +1,9 @@
-from ._core import filings, news, portfolio, quote
+from ._core import filings, groups, news, portfolio, quote
 from ._enums import (
     FilingFilter,
     FilingOrder,
+    GroupBy,
+    GroupColumn,
     NewsFeed,
     PortfolioColumn,
     PortfolioOrder,
@@ -12,12 +14,15 @@ from ._enums import (
 __all__ = [
     "FilingFilter",
     "FilingOrder",
+    "GroupBy",
+    "GroupColumn",
     "NewsFeed",
     "PortfolioColumn",
     "PortfolioOrder",
     "QuotePeriod",
     "QuoteRange",
     "filings",
+    "groups",
     "news",
     "portfolio",
     "quote",
