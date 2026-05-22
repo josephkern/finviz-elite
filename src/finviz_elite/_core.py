@@ -25,6 +25,95 @@ def _get_url(url: str) -> str:
     response.raise_for_status()
     return response.text
 
+class PortfolioColumn(Enum):
+    """Portfolio export columns, mapped to their ``c=`` index.
+
+    Used to subset and order the exported columns. The index values
+    and labels match the live portfolio_export header.
+    """
+
+    TICKER = 0
+    COMPANY = 1
+    PRICE = 2
+    CHANGE_PCT = 3       # Change%
+    VOLUME = 4
+    TRANSACTION = 5
+    DATE = 6
+    SHARES = 7
+    COST = 8
+    MARKET_VALUE = 9
+    GAIN_DOLLAR = 10     # Gain$
+    GAIN_PCT = 11        # Gain%
+    CHANGE_DOLLAR = 12   # Change$
+
+
+class PortfolioOrder(Enum):
+    """Sortable portfolio columns, mapped to their ``o=`` name.
+
+    The ``o=`` value names are verified against the live
+    portfolio_export endpoint. GAIN_DOLLAR and CHANGE_DOLLAR are
+    intentionally absent: that endpoint does not support ordering by
+    the Gain$ / Change$ columns (it silently ignores the request).
+    An unrecognised ``o=`` value is likewise ignored, so passing a
+    real PortfolioOrder member is the only way to guarantee a sort.
+    """
+
+    TICKER = "ticker"
+    COMPANY = "company"
+    PRICE = "price"
+    CHANGE_PCT = "changepct"
+    VOLUME = "volume"
+    TRANSACTION = "transaction"
+    DATE = "date"
+    SHARES = "shares"
+    COST = "cost"
+    MARKET_VALUE = "marketvalue"
+    GAIN_PCT = "gainpct"
+
+
+def portfolio(
+    pid: Union[int, str],
+    columns: Optional[List[PortfolioColumn]] = None,
+    order: Optional[PortfolioOrder] = None,
+    descending: bool = False,
+) -> str:
+    """
+    Download a Finviz portfolio as CSV.
+
+    Arguments:
+        pid: the portfolio id. Finviz has no API to list a user's
+            portfolios; read the pid from a portfolio's web URL
+            (.../portfolio.ashx?pid=XXXXXXX).
+        columns: optional subset of columns to export, as a list of
+            PortfolioColumn members. The export follows the given
+            order. When omitted, all 13 columns are returned.
+        order: optional column to sort by, a PortfolioOrder member.
+            When omitted, Finviz returns its default order.
+        descending: sort descending instead of ascending. Only has an
+            effect when 'order' is given; passing it alone raises
+            ValueError.
+
+    Examples:
+        portfolio(12345678)
+        portfolio(12345678, columns=[PortfolioColumn.TICKER,
+                                       PortfolioColumn.PRICE])
+        portfolio(12345678, order=PortfolioOrder.PRICE, descending=True)
+
+    Example URL: https://elite.finviz.com/portfolio_export?pid=12345&c=0,2&o=-price
+    """
+    if descending and order is None:
+        raise ValueError("descending=True requires an 'order' to sort by.")
+
+    data = "portfolio_export"
+    options = f"pid={pid}"
+    if columns:
+        options += "&c=" + ",".join(str(col.value) for col in columns)
+    if order:
+        options += f"&o={'-' if descending else ''}{order.value}"
+
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
+
 class NewsFeed(Enum):
     """Finviz news feeds, mapped to their ``v=`` query value.
 
