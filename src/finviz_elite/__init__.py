@@ -1,12 +1,10 @@
-from ._core import (
+from ._core import news, portfolio, quote
+from ._enums import (
     NewsFeed,
     PortfolioColumn,
     PortfolioOrder,
     QuotePeriod,
     QuoteRange,
-    news,
-    portfolio,
-    quote,
 )
 
 __all__ = [
