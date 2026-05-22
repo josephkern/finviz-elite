@@ -8,7 +8,6 @@ load_dotenv()
 FINVIZ_URL_BASE = "https://elite.finviz.com"
 AUTH_TOKEN_ENV_VAR = "AUTH_TOKEN_FINVIZ"
 
-
 def _buildURL(base_url: str, data_url: str, options_url: str) -> str:
     """Build a complete URL with authentication token."""
     auth_token = os.getenv(AUTH_TOKEN_ENV_VAR)
@@ -23,7 +22,7 @@ def _getURL(url: str) -> str:
     response.raise_for_status()
     return response.text
 
-def news(type: str) -> str:
+def news(*args: str) -> str:
     """
     Download News for a given type.
 
@@ -44,10 +43,13 @@ def news(type: str) -> str:
 
     Example: https://elite.finviz.com/news_export?v=1
     """
-    return pass
+    data = "news_export"
+    options = "&".join(args)
+    url = _buildURL(FINVIZ_URL_BASE, data, options)
+    return _getURL(url)
 
 
-def quote(ticker: str, range: str = '') -> str:
+def quote(ticker: str, range: str = None) -> str:
     """
     Download OHLVC data for a given ticker.
 

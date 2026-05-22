@@ -1,3 +1,6 @@
-from ._core import _build_url, quote
+from ._core import quote, news
 
-__all__ = ["quote", "_build_url"]
+__all__ = [
+    "quote",
+    "news",
+]
