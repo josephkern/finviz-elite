@@ -11,7 +11,7 @@ load_dotenv()
 FINVIZ_URL_BASE = "https://elite.finviz.com"
 AUTH_TOKEN_ENV_VAR = "AUTH_TOKEN_FINVIZ"
 
-def _buildURL(base_url: str, data_url: str, options_url: str) -> str:
+def _build_url(base_url: str, data_url: str, options_url: str) -> str:
     """Build a complete URL with authentication token."""
     auth_token = os.getenv(AUTH_TOKEN_ENV_VAR)
     if not auth_token:
@@ -19,7 +19,7 @@ def _buildURL(base_url: str, data_url: str, options_url: str) -> str:
 
     return f"{base_url}/{data_url}?{options_url}&auth={auth_token}"
 
-def _getURL(url: str) -> str:
+def _get_url(url: str) -> str:
     """Fetch URL and return response text. Raises exceptions on error."""
     response = requests.get(url)
     response.raise_for_status()
@@ -80,8 +80,8 @@ def news(feed: NewsFeed, tickers: Optional[Union[str, List[str]]] = None) -> str
             tickers = [tickers]
         options += f"&t={','.join(tickers)}"
 
-    url = _buildURL(FINVIZ_URL_BASE, data, options)
-    return _getURL(url)
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
 
 
 class QuoteRange(Enum):
@@ -148,5 +148,5 @@ def quote(
     options = f"t={ticker}&p={period.value}"
     if range:
         options += f"&r={range.value}"
-    url = _buildURL(FINVIZ_URL_BASE, data, options)
-    return _getURL(url)
+    url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
