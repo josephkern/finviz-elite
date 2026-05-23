@@ -39,7 +39,12 @@ def _build_url(base_url: str, data_url: str, options_url: str) -> str:
 
 def _get_url(url: str) -> str:
     """Fetch URL and return response text. Raises exceptions on error."""
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
+    if response.status_code == 429:
+        raise RuntimeError(
+            "Finviz rate-limited (HTTP 429). Increase the throttle interval "
+            "with FINVIZ_MCP_MIN_INTERVAL_S=<seconds> (default 13)."
+        )
     response.raise_for_status()
     return response.text
 

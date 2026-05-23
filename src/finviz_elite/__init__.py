@@ -1,3 +1,5 @@
+"""Python client for the Finviz Elite CSV export endpoints."""
+
 from ._core import filings, groups, news, portfolio, quote, screener
 from ._enums import (
     FilingFilter,
