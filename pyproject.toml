@@ -1,12 +1,23 @@
 [project]
 name = "finviz-elite"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python client for Finviz Elite CSV endpoints, with an MCP server wrapper"
 readme = "README.md"
 authors = [
-    { name = "josephkern", email = "joseph.a.kern@gmail.com" }
+    { name = "Joseph Kern", email = "888700+josephkern@users.noreply.github.com" }
 ]
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["finviz", "stock-screener", "trading", "financial-data", "mcp", "claude"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
 dependencies = [
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
@@ -17,6 +28,11 @@ mcp = ["mcp>=1.2.0"]
 
 [project.scripts]
 finviz-elite-mcp = "finviz_elite_mcp.server:main"
+
+[project.urls]
+Homepage = "https://github.com/josephkern/finviz-elite"
+Repository = "https://github.com/josephkern/finviz-elite"
+Issues = "https://github.com/josephkern/finviz-elite/issues"
 
 [build-system]
 requires = ["uv_build>=0.11.15,<0.12.0"]
