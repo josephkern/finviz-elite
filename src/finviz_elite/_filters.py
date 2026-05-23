@@ -2127,6 +2127,237 @@ class FilterAllTime(Enum):
     _0_PCT_TO_10_PCT_ABOVE_LOW = "ta_alltime_a0to10h"
 
 
+# --- ETF tier ----------------------------------------------------------
+
+
+class FilterETFNetExpense(Enum):
+    """Screener ETF Net Expense Ratio filter, mapped to its ``f=`` token."""
+
+    UNDER_0_1_PCT = "etf_netexpense_u01"
+    UNDER_0_2_PCT = "etf_netexpense_u02"
+    UNDER_0_3_PCT = "etf_netexpense_u03"
+    UNDER_0_4_PCT = "etf_netexpense_u04"
+    UNDER_0_5_PCT = "etf_netexpense_u05"
+    UNDER_0_6_PCT = "etf_netexpense_u06"
+    UNDER_0_7_PCT = "etf_netexpense_u07"
+    UNDER_0_8_PCT = "etf_netexpense_u08"
+    UNDER_0_9_PCT = "etf_netexpense_u09"
+    UNDER_1_0_PCT = "etf_netexpense_u10"
+
+
+class FilterETFCategory(Enum):
+    """Screener ETF Category filter, mapped to its ``f=`` token."""
+
+    BONDS_BROAD_MARKET = "etf_category_bondsbroadmarket"
+    BONDS_CONVERTIBLE = "etf_category_bondsconvertible"
+    BONDS_CORPORATE = "etf_category_bondscorporate"
+    BONDS_INFLATION_PROTECTED = "etf_category_bondsinflationprotected"
+    BONDS_LEVERAGED_INVERSE = "etf_category_bondsleveragedinverse"
+    BONDS_MORTGAGE = "etf_category_bondsmortgage"
+    BONDS_MUNICIPAL = "etf_category_bondsmunicipal"
+    BONDS_NON_GOVERNMENT_ASSET_BACKED_SECURITIES = "etf_category_bondsnongovernmentassetbackedsecurities"
+    BONDS_TREASURY_AND_GOVERNMENT = "etf_category_bondstreasurygovernment"
+    COMMODITIES_AND_METALS_AGRICULTURAL = "etf_category_commoditiesmetalsagricultural"
+    COMMODITIES_AND_METALS_DIVERSIFIED_COMMODITIES = "etf_category_commoditiesmetalsdiversifiedcommodities"
+    COMMODITIES_AND_METALS_ENERGY = "etf_category_commoditiesmetalsenergy"
+    COMMODITIES_AND_METALS_GOLD_METALS = "etf_category_commoditiesmetalsgoldmetals"
+    COMMODITIES_AND_METALS_LEVERAGED_INVERSE = "etf_category_commoditiesmetalsleveragedinverse"
+    CURRENCY = "etf_category_currency"
+    CURRENCY_LEVERAGED_INVERSE = "etf_category_currencyleveragedinverse"
+    EQUITY_LEVERAGED_INVERSE = "etf_category_equityleveragedinverse"
+    GLOBAL_OR_EXUS_EQUITIES_BROAD_REGIONAL = "etf_category_globalorexusequitiesbroadregional"
+    GLOBAL_OR_EXUS_EQUITIES_COUNTRY_SPECIFIC = "etf_category_globalorexusequitiescountryspecific"
+    GLOBAL_OR_EXUS_EQUITIES_DIVIDEND_AND_FUNDAMENTAL = "etf_category_globalorexusequitiesdividendfundamental"
+    GLOBAL_OR_EXUS_EQUITIES_FACTOR_AND_THEMATIC = "etf_category_globalorexusequitiesfactorthematic"
+    GLOBAL_OR_EXUS_EQUITIES_INDUSTRY_SECTOR = "etf_category_globalorexusequitiesindustrysector"
+    GLOBAL_OR_EXUS_EQUITIES_QUANT_STRAT = "etf_category_globalorexusequitiesquantstrat"
+    OTHER_ASSET_TYPES_LEVERAGED_INVERSE = "etf_category_otherassettypesleveragedinverse"
+    OTHER_ASSET_TYPES_MULTI_ASSET_OTHER = "etf_category_otherassettypesmultiassetother"
+    TARGET_DATE_MULTI_ASSET_LEVERAGED_INVERSE = "etf_category_targetdatemultiassetleveragedinverse"
+    TARGET_DATE_MULTI_ASSET_OTHER = "etf_category_targetdatemultiassetother"
+    US_EQUITIES_BROAD_MARKET_AND_SIZE = "etf_category_usequitiesbroadmarketsize"
+    US_EQUITIES_DIVIDEND_AND_FUNDAMENTAL = "etf_category_usequitiesdividendfundamental"
+    US_EQUITIES_FACTOR_AND_THEMATIC = "etf_category_usequitiesfactorthematic"
+    US_EQUITIES_INDUSTRY_SECTOR = "etf_category_usequitiesindustrysector"
+    US_EQUITIES_QUANT_STRAT = "etf_category_usequitiesquantstrat"
+    US_EQUITIES_US_STYLE = "etf_category_usequitiesusstyle"
+
+
+class FilterETFAssetType(Enum):
+    """Screener ETF Asset Type filter, mapped to its ``f=`` token."""
+
+    BONDS = "etf_assettype_bonds"
+    CARBON_TRADING = "etf_assettype_carbontrading"
+    CLOSED_END_FUNDS = "etf_assettype_closedendfunds"
+    COMMODITIES_AND_METALS = "etf_assettype_commoditiesmetals"
+    CRYPTOCURRENCY = "etf_assettype_cryptocurrency"
+    CURRENCY = "etf_assettype_currency"
+    EQUITIES_STOCKS = "etf_assettype_equitiesstocks"
+    EQUITIES_STOCKS_IPO_BASED = "etf_assettype_equitiesstocksipobased"
+    FREIGHT_FUTURES = "etf_assettype_freightfutures"
+    HEDGE_FUND_REPLICATION = "etf_assettype_hedgefundreplication"
+    MLP = "etf_assettype_mlp"
+    MULTI_ASSET_CONSERVATIVE = "etf_assettype_multiassetconservative"
+    MULTI_ASSET_GROWTH_AGGRESSIVE = "etf_assettype_multiassetgrowthaggressive"
+    MULTI_ASSET_MODERATE = "etf_assettype_multiassetmoderate"
+    MULTI_ASSET_TACTICAL_ACTIVE = "etf_assettype_multiassettacticalactive"
+    PREFERRED_STOCK = "etf_assettype_preferredstock"
+    PRIVATE_EQUITY = "etf_assettype_privateequity"
+    SPAC = "etf_assettype_spac"
+
+
+class FilterETFFundFlows(Enum):
+    """Screener ETF Net Fund Flows filter, mapped to its ``f=`` token."""
+
+    _1_MONTH_OVER_0_PERCENT = "etf_fundflows_1mo0"
+    _1_MONTH_OVER_10_PERCENT = "etf_fundflows_1mo10"
+    _1_MONTH_OVER_25_PERCENT = "etf_fundflows_1mo25"
+    _1_MONTH_OVER_50_PERCENT = "etf_fundflows_1mo50"
+    _1_MONTH_UNDER_0_PERCENT = "etf_fundflows_1mu0"
+    _1_MONTH_UNDER_10_PERCENT = "etf_fundflows_1mu10"
+    _1_MONTH_UNDER_25_PERCENT = "etf_fundflows_1mu25"
+    _1_MONTH_UNDER_50_PERCENT = "etf_fundflows_1mu50"
+    _3_MONTH_OVER_0_PERCENT = "etf_fundflows_3mo0"
+    _3_MONTH_OVER_10_PERCENT = "etf_fundflows_3mo10"
+    _3_MONTH_OVER_25_PERCENT = "etf_fundflows_3mo25"
+    _3_MONTH_OVER_50_PERCENT = "etf_fundflows_3mo50"
+    _3_MONTH_UNDER_0_PERCENT = "etf_fundflows_3mu0"
+    _3_MONTH_UNDER_10_PERCENT = "etf_fundflows_3mu10"
+    _3_MONTH_UNDER_25_PERCENT = "etf_fundflows_3mu25"
+    _3_MONTH_UNDER_50_PERCENT = "etf_fundflows_3mu50"
+    YTD_OVER_0_PERCENT = "etf_fundflows_ytdo0"
+    YTD_OVER_10_PERCENT = "etf_fundflows_ytdo10"
+    YTD_OVER_25_PERCENT = "etf_fundflows_ytdo25"
+    YTD_OVER_50_PERCENT = "etf_fundflows_ytdo50"
+    YTD_UNDER_0_PERCENT = "etf_fundflows_ytdu0"
+    YTD_UNDER_10_PERCENT = "etf_fundflows_ytdu10"
+    YTD_UNDER_25_PERCENT = "etf_fundflows_ytdu25"
+    YTD_UNDER_50_PERCENT = "etf_fundflows_ytdu50"
+
+
+class FilterETFReturn(Enum):
+    """Screener ETF Annualized Return filter, mapped to its ``f=`` token."""
+
+    _1_YEAR_OVER_0_PERCENT = "etf_return_1yo0"
+    _1_YEAR_OVER_5_PERCENT = "etf_return_1yo05"
+    _1_YEAR_OVER_10_PERCENT = "etf_return_1yo10"
+    _1_YEAR_OVER_25_PERCENT = "etf_return_1yo25"
+    _1_YEAR_UNDER_0_PERCENT = "etf_return_1yu0"
+    _1_YEAR_UNDER_5_PERCENT = "etf_return_1yu05"
+    _1_YEAR_UNDER_10_PERCENT = "etf_return_1yu10"
+    _1_YEAR_UNDER_25_PERCENT = "etf_return_1yu25"
+    _3_YEAR_OVER_0_PERCENT = "etf_return_3yo0"
+    _3_YEAR_OVER_5_PERCENT = "etf_return_3yo05"
+    _3_YEAR_OVER_10_PERCENT = "etf_return_3yo10"
+    _3_YEAR_OVER_25_PERCENT = "etf_return_3yo25"
+    _3_YEAR_UNDER_0_PERCENT = "etf_return_3yu0"
+    _3_YEAR_UNDER_5_PERCENT = "etf_return_3yu05"
+    _3_YEAR_UNDER_10_PERCENT = "etf_return_3yu10"
+    _3_YEAR_UNDER_25_PERCENT = "etf_return_3yu25"
+    _5_YEAR_OVER_0_PERCENT = "etf_return_5yo0"
+    _5_YEAR_OVER_5_PERCENT = "etf_return_5yo05"
+    _5_YEAR_OVER_10_PERCENT = "etf_return_5yo10"
+    _5_YEAR_OVER_25_PERCENT = "etf_return_5yo25"
+    _5_YEAR_UNDER_0_PERCENT = "etf_return_5yu0"
+    _5_YEAR_UNDER_5_PERCENT = "etf_return_5yu05"
+    _5_YEAR_UNDER_10_PERCENT = "etf_return_5yu10"
+    _5_YEAR_UNDER_25_PERCENT = "etf_return_5yu25"
+
+
+class FilterETFSponsor(Enum):
+    """
+    Screener ETF Sponsor filter (curated subset of the top ~30 issuers by AUM). For sponsors outside this list, use ``screener(raw_filters=['etf_sponsor_<suffix>'])``.
+    """
+
+    ALPHA_ARCHITECT = "etf_sponsor_alphaarchitect"
+    ALPS = "etf_sponsor_alps"
+    ARK_FUNDS = "etf_sponsor_arkfunds"
+    BLACKROCK_ISHARES = "etf_sponsor_blackrockishares"
+    CAPITAL_GROUP = "etf_sponsor_capitalgroup"
+    DIMENSIONAL = "etf_sponsor_dimensional"
+    DIREXION_SHARES = "etf_sponsor_direxionshares"
+    DOUBLELINE_FUNDS = "etf_sponsor_doublelinefunds"
+    DWS = "etf_sponsor_dws"
+    FIDELITY = "etf_sponsor_fidelity"
+    FIRST_TRUST = "etf_sponsor_firsttrust"
+    FRANKLIN_TEMPLETON = "etf_sponsor_franklintempleton"
+    GLOBAL_X = "etf_sponsor_globalx"
+    GOLDMAN_SACHS = "etf_sponsor_goldmansachs"
+    INNOVATOR_MANAGEMENT = "etf_sponsor_innovatormanagement"
+    INVESCO = "etf_sponsor_invesco"
+    JPMORGAN_CHASE = "etf_sponsor_jpmorganchase"
+    KRANE_SHARES = "etf_sponsor_kraneshares"
+    NUVEEN = "etf_sponsor_nuveen"
+    PACER_FINANCIAL = "etf_sponsor_pacerfinancial"
+    PIMCO = "etf_sponsor_pimco"
+    PROSHARES = "etf_sponsor_proshares"
+    ROUNDHILL_FINANCIAL = "etf_sponsor_roundhillfinancial"
+    SCHWAB = "etf_sponsor_schwab"
+    STATE_STREET_SPDR = "etf_sponsor_statestreetspdr"
+    VAN_ECK_ASSOCIATES_CORPORATION = "etf_sponsor_vaneckassociatescorporation"
+    VANGUARD = "etf_sponsor_vanguard"
+    WISDOM_TREE = "etf_sponsor_wisdomtree"
+
+
+class FilterETFTags(Enum):
+    """
+    Screener ETF Tags filter (curated subset of ~50 most-recognized thematic tags). For tags outside this list, use ``screener(raw_filters=['etf_tags_<suffix>'])``.
+    """
+
+    AI = "etf_tags_ai"
+    AFRICA = "etf_tags_africa"
+    ASIA = "etf_tags_asia"
+    BITCOIN = "etf_tags_bitcoin"
+    BLOCKCHAIN = "etf_tags_blockchain"
+    BRAZIL = "etf_tags_brazil"
+    CANADA = "etf_tags_canada"
+    CHINA = "etf_tags_china"
+    CLEAN_ENERGY = "etf_tags_cleanenergy"
+    CONSUMER = "etf_tags_consumer"
+    COVERED_CALL = "etf_tags_coveredcall"
+    CRYPTO = "etf_tags_crypto"
+    CYBER_SECURITY = "etf_tags_cybersecurity"
+    DEVELOPED = "etf_tags_developed"
+    DIVIDEND = "etf_tags_dividend"
+    DIVIDEND_GROWTH = "etf_tags_dividendgrowth"
+    EMERGING = "etf_tags_emerging"
+    ENERGY = "etf_tags_energy"
+    ESG = "etf_tags_esg"
+    EUROPE = "etf_tags_europe"
+    FINANCIAL = "etf_tags_financial"
+    FINTECH = "etf_tags_fintech"
+    GERMANY = "etf_tags_germany"
+    GOLD = "etf_tags_gold"
+    GROWTH = "etf_tags_growth"
+    HEALTHCARE = "etf_tags_healthcare"
+    HEDGE_FUND = "etf_tags_hedgefund"
+    HIGH_YIELD = "etf_tags_highyield"
+    INDIA = "etf_tags_india"
+    INFLATION = "etf_tags_inflation"
+    INNOVATION = "etf_tags_innovation"
+    INVERSE = "etf_tags_inverse"
+    JAPAN = "etf_tags_japan"
+    LARGE_CAP = "etf_tags_largecap"
+    METAVERSE = "etf_tags_metaverse"
+    MICRO_CAP = "etf_tags_microcap"
+    MID_CAP = "etf_tags_midcap"
+    MOMENTUM = "etf_tags_momentum"
+    MULTI_ASSET = "etf_tags_multiasset"
+    REAL_ESTATE = "etf_tags_realestate"
+    ROBOTICS = "etf_tags_robotics"
+    SILVER = "etf_tags_silver"
+    SMALL_CAP = "etf_tags_smallcap"
+    SP500 = "etf_tags_sp500"
+    SUSTAINABILITY = "etf_tags_sustainability"
+    TACTICAL = "etf_tags_tactical"
+    TECHNOLOGY = "etf_tags_technology"
+    TIPS = "etf_tags_tips"
+    UK = "etf_tags_uk"
+    US = "etf_tags_us"
+    VALUE = "etf_tags_value"
+    WATER = "etf_tags_water"
+
+
 # --- Elite custom numeric ranges ---------------------------------------
 
 
@@ -2216,4 +2447,11 @@ FilterEnum = Union[
     FilterPrice,
     FilterTargetPrice,
     FilterAllTime,
+    FilterETFNetExpense,
+    FilterETFCategory,
+    FilterETFAssetType,
+    FilterETFFundFlows,
+    FilterETFReturn,
+    FilterETFSponsor,
+    FilterETFTags,
 ]
