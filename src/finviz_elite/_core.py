@@ -253,12 +253,21 @@ def _build_range_token(
     Returns ``None`` when both bounds are ``None`` -- Finviz silently
     rejects the open-on-both-sides form ``{prefix}_to`` and would just
     return the unfiltered universe.
+
+    HighLow/AllTime metrics embed a direction suffix in their enum
+    value via a ``|`` separator (e.g. ``ta_highlow52w|-bhx``); the
+    suffix is appended *after* the bounds, producing tokens like
+    ``ta_highlow52w_10to30-bhx``.
     """
     if minimum is None and maximum is None:
         return None
     lo = "" if minimum is None else f"{minimum:g}"
     hi = "" if maximum is None else f"{maximum:g}"
-    return f"{metric.value}_{lo}to{hi}"
+    spec = metric.value
+    suffix = ""
+    if "|" in spec:
+        spec, suffix = spec.split("|", 1)
+    return f"{spec}_{lo}to{hi}{suffix}"
 
 
 def screener(

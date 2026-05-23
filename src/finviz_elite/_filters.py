@@ -2362,17 +2362,68 @@ class FilterETFTags(Enum):
 
 
 class ScreenerRange(Enum):
-    """Metrics that accept an Elite custom numeric range, mapped to the
-    metric's ``f=`` token prefix.
+    """Metrics that accept an Elite custom numeric range.
 
-    Bounds are supplied at call time via ``screener(ranges=...)``; the
-    token is built as ``{prefix}_{min}to{max}`` with either side omitted
-    when ``None``. Both bounds ``None`` skips the metric -- Finviz
-    rejects ``{prefix}_to`` outright.
+    Most members are the metric's ``f=`` token prefix; the screener
+    builds the token as ``{prefix}_{min}to{max}`` with either side
+    omitted when ``None``. Both bounds ``None`` skips the metric --
+    Finviz rejects ``{prefix}_to`` outright.
+
+    HighLow/AllTime members embed a direction suffix using a
+    ``|`` separator (e.g. ``ta_highlow52w|-bhx``); the screener
+    appends the suffix after the bounds: ``ta_highlow52w_10to30-bhx``.
+    Use ``BELOW_HIGH`` to filter by percent below the period high
+    and ``ABOVE_LOW`` to filter by percent above the period low.
     """
 
-    PE = "fa_pe"
-    BETA = "ta_beta"
+    PE = "fa_pe"  # P/E
+    FORWARD_PE = "fa_fpe"  # Forward P/E
+    PEG = "fa_peg"  # PEG
+    PS = "fa_ps"  # P/S
+    PB = "fa_pb"  # P/B
+    PC = "fa_pc"  # P/Cash
+    PFCF = "fa_pfcf"  # P/Free Cash Flow
+    EPS_GROWTH_THIS_YEAR = "fa_epsyoy"  # EPS growth this year
+    EPS_GROWTH_NEXT_YEAR = "fa_epsyoy1"  # EPS growth next year
+    EPS_GROWTH_PAST_5Y = "fa_eps5years"  # EPS growth past 5 years
+    EPS_GROWTH_NEXT_5Y = "fa_estltgrowth"  # EPS growth next 5 years (analyst estimate)
+    EPS_GROWTH_TTM = "fa_epsyoyttm"  # EPS growth TTM
+    EPS_GROWTH_QOQ = "fa_epsqoq"  # EPS growth quarter-over-quarter
+    SALES_GROWTH_PAST_5Y = "fa_sales5years"  # Sales growth past 5 years
+    SALES_GROWTH_QOQ = "fa_salesqoq"  # Sales growth quarter-over-quarter
+    DIVIDEND_YIELD = "fa_div"  # Dividend yield
+    PAYOUT_RATIO = "fa_payoutratio"  # Dividend payout ratio
+    RETURN_ON_ASSETS = "fa_roa"  # Return on assets
+    RETURN_ON_EQUITY = "fa_roe"  # Return on equity
+    RETURN_ON_INVESTMENT = "fa_roi"  # Return on investment
+    CURRENT_RATIO = "fa_curratio"  # Current ratio
+    QUICK_RATIO = "fa_quickratio"  # Quick ratio
+    LT_DEBT_EQUITY = "fa_ltdebteq"  # Long-term debt/equity
+    DEBT_EQUITY = "fa_debteq"  # Total debt/equity
+    GROSS_MARGIN = "fa_grossmargin"  # Gross margin
+    OPERATING_MARGIN = "fa_opermargin"  # Operating margin
+    NET_MARGIN = "fa_netmargin"  # Net profit margin
+    INSIDER_OWNERSHIP = "sh_insiderown"  # Insider ownership
+    INSIDER_TRANSACTIONS = "sh_insidertrans"  # Insider transactions
+    INSTITUTIONAL_OWNERSHIP = "sh_instown"  # Institutional ownership
+    INSTITUTIONAL_TRANSACTIONS = "sh_insttrans"  # Institutional transactions
+    FLOAT_SHORT = "sh_short"  # Float short %
+    BETA = "ta_beta"  # Beta
+    ATR = "ta_averagetruerange"  # Average True Range
+    RSI = "ta_rsi"  # RSI(14)
+    AVG_VOLUME = "sh_avgvol"  # Average daily volume (thousands)
+    REL_VOLUME = "sh_relvol"  # Relative volume
+    CUR_VOLUME = "sh_curvol"  # Current session volume (thousands)
+    PRICE = "sh_price"  # Share price
+
+    HIGHLOW_20D_BELOW_HIGH = "ta_highlow20d|-bhx"  # 20-day: percent below 20-day high
+    HIGHLOW_20D_ABOVE_LOW = "ta_highlow20d|-alx"  # 20-day: percent above 20-day low
+    HIGHLOW_50D_BELOW_HIGH = "ta_highlow50d|-bhx"  # 50-day: percent below 50-day high
+    HIGHLOW_50D_ABOVE_LOW = "ta_highlow50d|-alx"  # 50-day: percent above 50-day low
+    HIGHLOW_52W_BELOW_HIGH = "ta_highlow52w|-bhx"  # 52-week: percent below 52-week high
+    HIGHLOW_52W_ABOVE_LOW = "ta_highlow52w|-alx"  # 52-week: percent above 52-week low
+    ALLTIME_BELOW_HIGH = "ta_alltime|-bhx"  # All-time: percent below all-time high
+    ALLTIME_ABOVE_LOW = "ta_alltime|-alx"  # All-time: percent above all-time low
 
 
 # Every screener filter enum is a member of this Union. The screener's
