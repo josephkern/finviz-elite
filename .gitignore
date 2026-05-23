@@ -20,3 +20,10 @@ wheels/
 
 # Application Specific
 data/
+
+# Project-local MCP config (users generate their own — see README)
+.mcp.json
+
+# Local agent guidance (not for repo)
+CLAUDE.md
+

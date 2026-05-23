@@ -9,6 +9,16 @@ account. The library wraps six endpoints — `screener`, `quote`, `news`,
 `groups`, `portfolio`, `filings` — with typed enum surfaces for every
 filter, column, and order option.
 
+> This is an unofficial client library for users with their own Finviz Elite
+> subscription. Not affiliated with or endorsed by Finviz Financial
+> Visualizations, LLC.
+
+## Requirements
+
+- Python 3.10+
+- A [Finviz Elite](https://elite.finviz.com/) subscription
+- The `auth=` token from your Finviz session (see Authentication below)
+
 ## Install
 
 ```bash
@@ -73,14 +83,36 @@ members were verified against the live API.
 ## MCP server
 
 `finviz_elite_mcp` is a sibling package that exposes the six library
-endpoints (plus two discovery tools) over MCP/stdio. To use it from
-Claude Code in this project, the included `.mcp.json` already points
-Claude at the venv-installed server.
+endpoints (plus two discovery tools) over MCP/stdio.
 
-```bash
-uv pip install -e ".[mcp]"
-# Restart Claude Code; approve the project-scoped `finviz-elite` server.
+### Setup with Claude Code
+
+After installing the MCP extra, create a project-scoped `.mcp.json` in
+the directory where you want Claude Code to use the server:
+
+```json
+{
+  "mcpServers": {
+    "finviz-elite": {
+      "type": "stdio",
+      "command": ".venv/bin/finviz-elite-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
 ```
+
+Adjust `command` to match your environment:
+
+- Relative path (`.venv/bin/finviz-elite-mcp`) works when Claude Code
+  runs from the project root.
+- Use the absolute path (`/abs/path/to/.venv/bin/finviz-elite-mcp`) if
+  Claude Code runs from elsewhere.
+- Or use `python -m finviz_elite_mcp` if the venv's `python` is on PATH.
+
+Restart Claude Code and approve the project-scoped `finviz-elite`
+server when prompted.
 
 ### Tools
 
@@ -140,3 +172,7 @@ pytest tests/
 
 The test suite is offline — no Finviz auth or network needed for the
 resolver tests.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
