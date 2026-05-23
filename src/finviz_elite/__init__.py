@@ -2,10 +2,6 @@ from ._core import filings, groups, news, portfolio, quote, screener
 from ._enums import (
     FilingFilter,
     FilingOrder,
-    FilterExchange,
-    FilterIndex,
-    FilterMarketCap,
-    FilterSector,
     GroupBy,
     GroupColumn,
     GroupOrder,
@@ -17,10 +13,19 @@ from ._enums import (
     ScreenerColumn,
     ScreenerOrder,
 )
+from ._filters import (
+    FilterEnum,
+    FilterExchange,
+    FilterIndex,
+    FilterMarketCap,
+    FilterSector,
+    ScreenerRange,
+)
 
 __all__ = [
     "FilingFilter",
     "FilingOrder",
+    "FilterEnum",
     "FilterExchange",
     "FilterIndex",
     "FilterMarketCap",
@@ -35,6 +40,7 @@ __all__ = [
     "QuoteRange",
     "ScreenerColumn",
     "ScreenerOrder",
+    "ScreenerRange",
     "filings",
     "groups",
     "news",

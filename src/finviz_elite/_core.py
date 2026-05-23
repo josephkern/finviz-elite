@@ -1,8 +1,7 @@
 import requests
 import os
 
-from enum import Enum
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from dotenv import load_dotenv
 
@@ -21,6 +20,7 @@ from ._enums import (
     ScreenerOrder,
     TICKER_FEEDS,
 )
+from ._filters import FilterEnum, ScreenerRange
 
 load_dotenv()
 
@@ -243,22 +243,45 @@ def portfolio(
     return _get_url(url)
 
 
+def _build_range_token(
+    metric: ScreenerRange,
+    minimum: Optional[float],
+    maximum: Optional[float],
+) -> Optional[str]:
+    """Build the ``f=`` token for a Finviz Elite custom numeric range.
+
+    Returns ``None`` when both bounds are ``None`` -- Finviz silently
+    rejects the open-on-both-sides form ``{prefix}_to`` and would just
+    return the unfiltered universe.
+    """
+    if minimum is None and maximum is None:
+        return None
+    lo = "" if minimum is None else f"{minimum:g}"
+    hi = "" if maximum is None else f"{maximum:g}"
+    return f"{metric.value}_{lo}to{hi}"
+
+
 def screener(
-    filters: Optional[List[Union[str, Enum]]] = None,
+    filters: Optional[List[FilterEnum]] = None,
+    ranges: Optional[Dict[ScreenerRange, Tuple[Optional[float], Optional[float]]]] = None,
     columns: Optional[List[ScreenerColumn]] = None,
     order: Optional[ScreenerOrder] = None,
     descending: bool = False,
+    raw_filters: Optional[List[str]] = None,
 ) -> str:
     """
     Run the Finviz stock screener and download the result as CSV.
 
     Arguments:
-        filters: optional screening criteria, a list of filter tokens.
-            Each item may be a filter enum member (FilterSector,
-            FilterExchange, FilterIndex, FilterMarketCap) or a raw
-            Finviz token string for the long tail of filters not
-            covered by an enum (e.g. "fa_div_pos"). When omitted, the
-            whole market is returned.
+        filters: optional screening criteria, a list of filter enum
+            members (any member of FilterEnum: FilterExchange,
+            FilterIndex, FilterSector, FilterMarketCap, ...). When
+            omitted, the whole market is returned.
+        ranges: optional Elite custom numeric ranges, a dict keyed by
+            ScreenerRange member with ``(min, max)`` tuples as values.
+            Either bound may be ``None`` for an open-ended range; both
+            ``None`` skips the metric. Example:
+            ``ranges={ScreenerRange.PE: (10, 20)}``.
         columns: optional subset of columns to export, as a list of
             ScreenerColumn members. The export follows the given order.
             When omitted, Finviz returns its default column set.
@@ -267,14 +290,21 @@ def screener(
         descending: sort descending instead of ascending. Only has an
             effect when 'order' is given; passing it alone raises
             ValueError.
+        raw_filters: last-resort escape hatch for filter tokens not yet
+            modeled as enum members. Strings are appended to ``f=``
+            verbatim. Prefer the typed ``filters`` and ``ranges`` params;
+            reach for this only when neither covers the filter you need.
 
     Examples:
         screener(filters=[FilterSector.TECHNOLOGY, FilterMarketCap.LARGE])
-        screener(filters=["fa_div_pos", FilterSector.TECHNOLOGY],
-                 columns=[ScreenerColumn.TICKER, ScreenerColumn.PRICE])
+        screener(ranges={ScreenerRange.PE: (10, 20)})
+        screener(filters=[FilterSector.TECHNOLOGY],
+                 ranges={ScreenerRange.BETA: (None, 1.5)})
+        screener(raw_filters=["fa_div_pos"])
         screener(order=ScreenerOrder.MARKET_CAP, descending=True)
 
-    Example URL: https://elite.finviz.com/export?v=152&c=0,1,2&f=sec_technology
+    Example URL:
+        https://elite.finviz.com/export?v=152&c=0,1,2&f=sec_technology,fa_pe_10to20
     """
     if descending and order is None:
         raise ValueError("descending=True requires an 'order' to sort by.")
@@ -284,9 +314,20 @@ def screener(
     options = "v=152"
     if columns:
         options += "&c=" + ",".join(str(col.value) for col in columns)
+
+    tokens: List[str] = []
     if filters:
-        tokens = [f.value if isinstance(f, Enum) else str(f) for f in filters]
+        tokens.extend(f.value for f in filters)
+    if ranges:
+        for metric, (lo, hi) in ranges.items():
+            token = _build_range_token(metric, lo, hi)
+            if token is not None:
+                tokens.append(token)
+    if raw_filters:
+        tokens.extend(raw_filters)
+    if tokens:
         options += "&f=" + ",".join(tokens)
+
     if order:
         options += f"&o={'-' if descending else ''}{order.value}"
 

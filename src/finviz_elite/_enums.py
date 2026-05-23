@@ -391,57 +391,6 @@ class ScreenerColumn(Enum):
     DAILY_DIGEST = 150
 
 
-# --- Screener filters (f=) ---------------------------------------------
-# Finviz has ~70 filter categories; these cover the common "descriptive"
-# ones. Every token below is verified against the live screener export.
-# The long tail of filters can still be passed to screener() as raw
-# strings alongside these enum members.
-
-
-class FilterExchange(Enum):
-    """Screener exchange filter, mapped to its ``f=`` token."""
-
-    AMEX = "exch_amex"
-    NASDAQ = "exch_nasd"
-    NYSE = "exch_nyse"
-
-
-class FilterIndex(Enum):
-    """Screener index-membership filter, mapped to its ``f=`` token."""
-
-    SP500 = "idx_sp500"
-    DJIA = "idx_dji"
-    NASDAQ100 = "idx_ndx"
-    RUSSELL2000 = "idx_rut"
-
-
-class FilterSector(Enum):
-    """Screener sector filter, mapped to its ``f=`` token."""
-
-    BASIC_MATERIALS = "sec_basicmaterials"
-    COMMUNICATION_SERVICES = "sec_communicationservices"
-    CONSUMER_CYCLICAL = "sec_consumercyclical"
-    CONSUMER_DEFENSIVE = "sec_consumerdefensive"
-    ENERGY = "sec_energy"
-    FINANCIAL = "sec_financial"
-    HEALTHCARE = "sec_healthcare"
-    INDUSTRIALS = "sec_industrials"
-    REAL_ESTATE = "sec_realestate"
-    TECHNOLOGY = "sec_technology"
-    UTILITIES = "sec_utilities"
-
-
-class FilterMarketCap(Enum):
-    """Screener market-cap filter, mapped to its ``f=`` token."""
-
-    MEGA = "cap_mega"     # $200bln and above
-    LARGE = "cap_large"   # $10bln to $200bln
-    MID = "cap_mid"       # $2bln to $10bln
-    SMALL = "cap_small"   # $300mln to $2bln
-    MICRO = "cap_micro"   # $50mln to $300mln
-    NANO = "cap_nano"     # under $50mln
-
-
 class ScreenerOrder(Enum):
     """Sortable screener columns, mapped to their ``o=`` name token.
 
