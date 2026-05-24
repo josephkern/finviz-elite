@@ -1,0 +1,96 @@
+name: Bug report
+description: Report incorrect behavior, a crash, or a security issue in finviz-elite.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The more concrete the
+        reproduction, the faster this can ship a fix. If the bug touches
+        auth tokens, credentials, or other sensitive data, please redact
+        before posting.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One sentence describing what's wrong.
+      placeholder: "`raise_for_status()` leaks the Finviz auth token in the exception URL."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: |
+        Minimal steps to reproduce. Include the exact call, expected
+        output, and what actually happened. A failing snippet beats a
+        prose description.
+      placeholder: |
+        ```python
+        import finviz_elite as fe
+        fe.filings("MSFT,AAPL")  # any call that returns non-2xx
+        ```
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened instead.
+      placeholder: "The exception should not include the `auth=` query parameter."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened. Include stack traces, response codes, and unexpected output. **Redact any auth tokens.**
+      placeholder: |
+        ```
+        requests.exceptions.HTTPError: 400 Client Error: Bad Request for url:
+        https://elite.finviz.com/export/latest-filings?t=MSFT,AAPL&auth=<REDACTED>
+        ```
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Library version, Python version, OS. Helpful for narrowing the regression window.
+      placeholder: |
+        - finviz-elite: 0.2.1
+        - Python: 3.12
+        - OS: macOS 14.5
+    validations:
+      required: false
+
+  - type: textarea
+    id: suspected-cause
+    attributes:
+      label: Suspected cause / proposed fix
+      description: Optional — pointer to the line(s) you suspect, or a sketch of how to fix it.
+      placeholder: |
+        `src/finviz_elite/_core.py:49` calls `response.raise_for_status()`
+        on a Response whose URL contains `auth=`. Strip the token from
+        `response.url` (or build a sanitized URL for the error) before
+        raising.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues for this bug.
+          required: true
+        - label: I have redacted any auth tokens or other sensitive data from this report.
+          required: true
