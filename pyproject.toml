@@ -1,6 +1,6 @@
 [project]
 name = "finviz-elite"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python client for Finviz Elite CSV endpoints, with an MCP server wrapper"
 readme = "README.md"
 authors = [
