@@ -298,48 +298,33 @@ def portfolio(
     return _get_url(url)
 
 
-def portfolio_tickers(
-    pid: Union[int, str],
-    *,
-    exclude_cash: bool = True,
-    dedupe: bool = True,
-) -> List[str]:
+def portfolio_tickers(pid: Union[int, str]) -> List[str]:
     """
-    Return the tickers from a Finviz portfolio, in portfolio order.
+    Return the distinct tickers from a Finviz portfolio, in portfolio order.
 
-    Portfolios commonly contain duplicate ticker rows (separate lots
-    tracked by cost basis) and one or more ``$CASH`` sentinel rows for
-    cash positions. By default both are normalized away so the result
-    is suitable for ``screener(tickers=...)`` or ``news(tickers=...)``.
+    Portfolios track separate lots as separate rows, so the same ticker
+    can appear several times; duplicates are collapsed via first-
+    occurrence order. Cash positions (``$CASH``) are real portfolio
+    entries and are included in the result.
+
+    Note that ``screener(tickers=...)`` rejects ``$``-prefixed tokens
+    with ``ValueError`` -- so when feeding this list to the screener,
+    filter cash out at the call site:
+
+        tickers = [t for t in portfolio_tickers(pid) if not t.startswith("$")]
+        screener(tickers=tickers, filters=[FilterSector.TECHNOLOGY])
 
     Arguments:
         pid: portfolio id, same as portfolio(). Read from the portfolio
             URL (.../portfolio.ashx?pid=XXXXXXX).
-        exclude_cash: drop rows where the ticker is ``$CASH`` (default
-            True). A portfolio can have multiple cash rows (e.g. USD +
-            margin); all are filtered. Important: ``screener(tickers=)``
-            rejects ``$``-prefixed tokens with ValueError, so passing
-            ``exclude_cash=False`` and then screening will raise.
-        dedupe: collapse duplicate ticker rows, preserving first-
-            occurrence order (default True). Set False to recover the
-            raw per-lot row count.
-
-    Examples:
-        tickers = portfolio_tickers(12345678)
-        screener(tickers=tickers, filters=[FilterSector.TECHNOLOGY])
 
     Rate-limit note: this is one HTTP request. When chained with another
-    Finviz call (e.g. screener), the 13s spacing between requests still
-    applies to the caller.
+    Finviz call, the 13s spacing between requests still applies.
     """
     csv_text = portfolio(pid, columns=[PortfolioColumn.TICKER])
     reader = csv.DictReader(StringIO(csv_text))
     tickers = [row["Ticker"] for row in reader if row.get("Ticker")]
-    if exclude_cash:
-        tickers = [t for t in tickers if t != "$CASH"]
-    if dedupe:
-        tickers = list(dict.fromkeys(tickers))
-    return tickers
+    return list(dict.fromkeys(tickers))
 
 
 def _build_range_token(

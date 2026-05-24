@@ -33,44 +33,11 @@ SAMPLE_CSV = (
 )
 
 
-def test_default_excludes_cash_and_dedupes(portfolio_csv):
+def test_dedupes_and_includes_cash(portfolio_csv):
     portfolio_csv(SAMPLE_CSV)
-    assert fe.portfolio_tickers(123) == ["MSFT", "AAPL", "GOOG"]
-
-
-def test_exclude_cash_false_keeps_cash(portfolio_csv):
-    portfolio_csv(SAMPLE_CSV)
-    # dedupe still collapses the two $CASH rows
-    assert fe.portfolio_tickers(123, exclude_cash=False) == [
-        "$CASH",
-        "MSFT",
-        "AAPL",
-        "GOOG",
-    ]
-
-
-def test_dedupe_false_keeps_lots(portfolio_csv):
-    portfolio_csv(SAMPLE_CSV)
-    assert fe.portfolio_tickers(123, dedupe=False) == [
-        "MSFT",
-        "AAPL",
-        "AAPL",
-        "GOOG",
-        "AAPL",
-    ]
-
-
-def test_both_flags_false_returns_raw(portfolio_csv):
-    portfolio_csv(SAMPLE_CSV)
-    assert fe.portfolio_tickers(123, exclude_cash=False, dedupe=False) == [
-        "$CASH",
-        "$CASH",
-        "MSFT",
-        "AAPL",
-        "AAPL",
-        "GOOG",
-        "AAPL",
-    ]
+    # $CASH is a real position; dedupe collapses both the cash rows and
+    # the duplicate AAPL lots, preserving first-occurrence order.
+    assert fe.portfolio_tickers(123) == ["$CASH", "MSFT", "AAPL", "GOOG"]
 
 
 def test_preserves_first_occurrence_order(portfolio_csv):
@@ -85,7 +52,7 @@ def test_empty_portfolio(portfolio_csv):
 
 def test_all_cash_portfolio(portfolio_csv):
     portfolio_csv('"Ticker"\n"$CASH"\n"$CASH"\n')
-    assert fe.portfolio_tickers(123) == []
+    assert fe.portfolio_tickers(123) == ["$CASH"]
 
 
 def test_string_pid_accepted(portfolio_csv):
