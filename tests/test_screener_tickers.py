@@ -59,14 +59,33 @@ def test_screener_tickers_empty_list_omitted(capture_url):
     assert "&t=" not in capture_url["url"]
 
 
-def test_screener_rejects_dollar_prefixed_ticker(capture_url):
-    # Finviz silently substitutes $CASH -> ticker CASH (Pathward Financial Inc).
-    # Reject loudly rather than letting silent data corruption through.
-    with pytest.raises(ValueError, match=r"\$CASH"):
-        fe.screener(tickers=["$CASH", "MSFT"])
-    assert "url" not in capture_url  # request must never be built
+def test_screener_silently_drops_cash_sentinel(capture_url):
+    # '$CASH' is a documented portfolio-export sentinel — drop it silently
+    # and proceed with the remaining tickers, so portfolio_tickers chains
+    # straight into screener.
+    fe.screener(tickers=["$CASH", "MSFT", "AAPL"])
+    url = capture_url["url"]
+    assert "&t=MSFT,AAPL" in url
+    assert "$CASH" not in url
+    assert "CASH" not in url.split("&t=")[1].split("&")[0]
 
 
-def test_screener_rejects_any_dollar_prefix(capture_url):
-    with pytest.raises(ValueError, match=r"portfolio_tickers"):
-        fe.screener(tickers=["$FOO"])
+def test_screener_rejects_other_dollar_prefixed_tickers(capture_url):
+    # Anything other than '$CASH' is unknown territory (typo, future
+    # sentinel) — raise to prevent silent server-side substitution.
+    with pytest.raises(ValueError, match=r"\$FOO"):
+        fe.screener(tickers=["$FOO", "MSFT"])
+    assert "url" not in capture_url
+
+
+def test_screener_raises_when_only_cash_passed(capture_url):
+    # All-cash list filters down to nothing — refuse rather than fall
+    # through to an unrestricted whole-market scan.
+    with pytest.raises(ValueError, match=r"nothing left to screen"):
+        fe.screener(tickers=["$CASH"])
+    assert "url" not in capture_url
+
+
+def test_screener_raises_when_only_cash_passed_as_string(capture_url):
+    with pytest.raises(ValueError, match=r"nothing left to screen"):
+        fe.screener(tickers="$CASH")

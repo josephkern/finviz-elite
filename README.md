@@ -74,10 +74,10 @@ fe.portfolio(12345678)
 # is a real position and is included).
 positions = fe.portfolio_tickers(12345678)
 
-# To screen the equity positions, filter $-prefixed tokens at the call
-# site — screener() rejects them to prevent silent substitution.
-equities = [t for t in positions if not t.startswith("$")]
-fe.screener(tickers=equities, filters=[fe.FilterSector.TECHNOLOGY])
+# Feed straight into screener — the $CASH sentinel is silently dropped.
+# (Any other $-prefixed token would raise, since Finviz would otherwise
+# silently match the bare symbol and return data for a different stock.)
+fe.screener(tickers=positions, filters=[fe.FilterSector.TECHNOLOGY])
 
 # Latest SEC filings for a ticker
 fe.filings("MSFT", order=fe.FilingOrder.FILING_DATE, descending=True)
