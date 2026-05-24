@@ -62,6 +62,12 @@ def test_resolve_member_none_returns_none():
     assert resolve_member(QuoteRange, None) is None
 
 
+def test_resolve_options_type():
+    from finviz_elite import OptionsType
+
+    assert resolve_member(OptionsType, "OPTIONS_CHAIN") is OptionsType.OPTIONS_CHAIN
+
+
 def test_list_filter_classes_has_known_entries():
     classes = list_filter_classes()
     assert "FilterSector" in classes

@@ -67,6 +67,18 @@ class QuotePeriod(Enum):
     MONTHLY = "m"
 
 
+class OptionsType(Enum):
+    """Options export type, mapped to its ``ty=`` query value.
+
+    Only ``OPTIONS_CHAIN`` ("oc") returns distinct data on the export
+    endpoint. The UI also exposes ``ty=ocv`` ("options chain volatility"),
+    but on the export it returns the same columns and rows as ``ty=oc``
+    with an expiration filter -- so it is intentionally omitted here.
+    """
+
+    OPTIONS_CHAIN = "oc"
+
+
 class FilingFilter(Enum):
     """SEC filing categories for the latest-filings export, mapped to
     their ``f=`` query value.
