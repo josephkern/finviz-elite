@@ -196,10 +196,10 @@ def portfolio_tickers(pid: int) -> List[str]:
     """Return the distinct tickers in a Finviz portfolio, in portfolio order.
 
     Lot duplicates are collapsed. $CASH positions are included as-is.
-    When chaining into screener(tickers=...), filter $-prefixed tokens
-    at the call site -- screener rejects them to prevent silent
-    substitution (Finviz maps $CASH to ticker CASH, Pathward Financial
-    Inc, a real listed bank).
+    The result can be passed directly to screener(tickers=...), which
+    silently drops the $CASH sentinel (and raises on any other
+    $-prefixed token to prevent Finviz from silently substituting the
+    bare symbol, e.g. $CASH -> ticker CASH, Pathward Financial Inc).
 
     Args:
         pid: Portfolio id (read from the portfolio URL: portfolio.ashx?pid=XXX).
