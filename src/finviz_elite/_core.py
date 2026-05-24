@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from io import StringIO
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -39,15 +40,38 @@ def _build_url(base_url: str, data_url: str, options_url: str) -> str:
     return f"{base_url}/{data_url}?{options_url}&auth={auth_token}"
 
 
+_AUTH_PARAM_RE = re.compile(r"([?&])auth=[^&\s]+")
+
+
+def _scrub_auth(text: str) -> str:
+    """Redact ``auth=...`` query parameters from a string."""
+    return _AUTH_PARAM_RE.sub(r"\1auth=<redacted>", text)
+
+
 def _get_url(url: str) -> str:
-    """Fetch URL and return response text. Raises exceptions on error."""
+    """Fetch URL and return response text. Raises exceptions on error.
+
+    HTTP error messages have the ``auth=`` query parameter redacted before
+    propagating, so the Finviz Elite token does not leak via traceback,
+    log line, or exception tracker.
+    """
     response = requests.get(url, timeout=30)
     if response.status_code == 429:
         raise RuntimeError(
             "Finviz rate-limited (HTTP 429). Increase the throttle interval "
             "with FINVIZ_MCP_MIN_INTERVAL_S=<seconds> (default 13)."
         )
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        # requests embeds the URL (with auth token) in the HTTPError
+        # message *and* leaves it on response.url / response.request.url.
+        # Scrub all three before re-raising so callers can still inspect
+        # e.response.status_code without exposing the token.
+        response.url = _scrub_auth(response.url)
+        if response.request is not None:
+            response.request.url = _scrub_auth(response.request.url)
+        raise requests.HTTPError(_scrub_auth(str(e)), response=response) from None
     return response.text
 
 
