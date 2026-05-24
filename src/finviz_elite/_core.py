@@ -307,10 +307,10 @@ def portfolio_tickers(pid: Union[int, str]) -> List[str]:
     occurrence order. Cash positions (``$CASH``) are real portfolio
     entries and are included in the result.
 
-    The output can be fed directly to ``screener(tickers=...)`` or
-    ``news(tickers=...)`` -- screener silently drops the ``$CASH``
-    sentinel (and raises on any other ``$``-prefixed token, which
-    would otherwise be silently substituted server-side):
+    The output can be fed directly to ``screener(tickers=...)`` --
+    screener silently drops any ``$``-prefixed token (including the
+    ``$CASH`` sentinel), since Finviz would otherwise strip the ``$``
+    and match the bare symbol:
 
         screener(tickers=portfolio_tickers(pid),
                  filters=[FilterSector.TECHNOLOGY])
@@ -432,31 +432,17 @@ def screener(
     if tickers:
         if isinstance(tickers, str):
             tickers = [tickers]
-        # '$CASH' is a documented Finviz portfolio-export sentinel; the
-        # same library produces it via portfolio_tickers(). Drop it
-        # silently so chaining portfolio_tickers -> screener Just Works.
-        # Any other '$'-prefixed token is unknown territory (typo, future
-        # sentinel, user confusion) -- raise rather than letting Finviz
-        # silently strip the '$' and substitute a real listed symbol
-        # (e.g. '$CASH' -> ticker CASH, Pathward Financial Inc).
-        cleaned = []
-        for t in tickers:
-            if t == "$CASH":
-                continue
-            if t.startswith("$"):
-                raise ValueError(
-                    f"Ticker {t!r} is not a valid symbol. Finviz strips "
-                    f"the '$' and matches the bare symbol, so this would "
-                    f"silently return a row for a different stock. Only "
-                    f"the documented '$CASH' portfolio sentinel is "
-                    f"dropped automatically; remove other '$'-prefixed "
-                    f"entries before calling screener()."
-                )
-            cleaned.append(t)
+        # Drop any '$'-prefixed token: '$CASH' is the documented Finviz
+        # portfolio-export sentinel, and other '$X' forms would be
+        # silently substituted server-side (Finviz strips the '$' and
+        # matches the bare symbol, e.g. '$CASH' -> ticker CASH, Pathward
+        # Financial Inc). If filtering empties the list, raise rather
+        # than fall through to an unrestricted whole-market scan.
+        cleaned = [t for t in tickers if not t.startswith("$")]
         if not cleaned:
             raise ValueError(
-                "All tickers were '$CASH' (cash positions); nothing left "
-                "to screen. Add equity tickers to the list."
+                "All tickers were either '$CASH' (cash positions) or "
+                "prefixed with '$'; nothing left to screen."
             )
         options += f"&t={','.join(cleaned)}"
 

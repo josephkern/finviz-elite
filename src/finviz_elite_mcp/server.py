@@ -197,9 +197,9 @@ def portfolio_tickers(pid: int) -> List[str]:
 
     Lot duplicates are collapsed. $CASH positions are included as-is.
     The result can be passed directly to screener(tickers=...), which
-    silently drops the $CASH sentinel (and raises on any other
-    $-prefixed token to prevent Finviz from silently substituting the
-    bare symbol, e.g. $CASH -> ticker CASH, Pathward Financial Inc).
+    silently drops any $-prefixed token (Finviz would otherwise strip
+    the $ and match the bare symbol, e.g. $CASH -> ticker CASH,
+    Pathward Financial Inc).
 
     Args:
         pid: Portfolio id (read from the portfolio URL: portfolio.ashx?pid=XXX).
