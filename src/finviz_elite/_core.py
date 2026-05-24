@@ -12,6 +12,7 @@ from ._enums import (
     GroupColumn,
     GroupOrder,
     NewsFeed,
+    OptionsType,
     PortfolioColumn,
     PortfolioOrder,
     QuotePeriod,
@@ -170,6 +171,54 @@ def news(feed: NewsFeed, tickers: Optional[Union[str, List[str]]] = None) -> str
         options += f"&t={','.join(tickers)}"
 
     url = _build_url(FINVIZ_URL_BASE, data, options)
+    return _get_url(url)
+
+
+def options(
+    ticker: str,
+    expiration: Optional[str] = None,
+    strike: Optional[float] = None,
+    type: OptionsType = OptionsType.OPTIONS_CHAIN,
+) -> str:
+    """
+    Download an options chain as CSV.
+
+    Arguments:
+        ticker: stock symbol, e.g. "MSFT".
+        expiration: optional ISO date ("YYYY-MM-DD") to filter to a
+            single expiration. Must match a listed expiration -- an
+            arbitrary date returns a header-only CSV. Omit to span
+            every expiration (large for liquid names: a single pull
+            for an active mega-cap can exceed 3,000 contracts).
+        strike: optional strike price to filter to a single strike
+            (e.g. 420.0). Returns every contract at that strike
+            across all expirations (or the one filtered above).
+        type: OptionsType member; defaults to OPTIONS_CHAIN.
+
+    Column note: the result schema is *dynamic*. The unfiltered chain
+    returns 18 columns including ``Expiry`` and ``Strike``. Filtering
+    by ``expiration`` drops the ``Expiry`` column; filtering by
+    ``strike`` drops the ``Strike`` column. Filtering by both drops
+    both. Greeks (Delta/Gamma/Theta/Vega/Rho) and IV are always
+    included and are computed server-side. Contract names follow OCC
+    format (e.g. ``MSFT260618P00175000``).
+
+    Examples:
+        options("MSFT")
+        options("MSFT", expiration="2026-06-19")
+        options("MSFT", strike=420.0)
+        options("MSFT", expiration="2026-06-19", strike=420.0)
+
+    Example URL: https://elite.finviz.com/export/options?t=MSFT&ty=oc&e=2026-06-19
+    """
+    data = "export/options"
+    opts = f"t={ticker}&ty={type.value}"
+    if expiration:
+        opts += f"&e={expiration}"
+    if strike is not None:
+        opts += f"&s={strike:g}"
+
+    url = _build_url(FINVIZ_URL_BASE, data, opts)
     return _get_url(url)
 
 
