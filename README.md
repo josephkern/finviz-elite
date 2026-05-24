@@ -70,6 +70,16 @@ fe.news(fe.NewsFeed.STOCKS, tickers=["MSFT", "AAPL"])
 # Portfolio export (pid from .../portfolio.ashx?pid=XXX)
 fe.portfolio(12345678)
 
+# Distinct tickers from a portfolio (lot duplicates collapsed; $CASH
+# is a real position and is included).
+positions = fe.portfolio_tickers(12345678)
+
+# Feed straight into screener — any $-prefixed token (including the
+# $CASH sentinel) is silently dropped, since Finviz would otherwise
+# strip the $ and match the bare symbol (e.g. $CASH → ticker CASH,
+# Pathward Financial Inc).
+fe.screener(tickers=positions, filters=[fe.FilterSector.TECHNOLOGY])
+
 # Latest SEC filings for a ticker
 fe.filings("MSFT", order=fe.FilingOrder.FILING_DATE, descending=True)
 

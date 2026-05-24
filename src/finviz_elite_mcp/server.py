@@ -192,6 +192,23 @@ def portfolio(
 
 
 @mcp.tool()
+def portfolio_tickers(pid: int) -> List[str]:
+    """Return the distinct tickers in a Finviz portfolio, in portfolio order.
+
+    Lot duplicates are collapsed. $CASH positions are included as-is.
+    The result can be passed directly to screener(tickers=...), which
+    silently drops any $-prefixed token (Finviz would otherwise strip
+    the $ and match the bare symbol, e.g. $CASH -> ticker CASH,
+    Pathward Financial Inc).
+
+    Args:
+        pid: Portfolio id (read from the portfolio URL: portfolio.ashx?pid=XXX).
+    """
+    gate.wait()
+    return fe.portfolio_tickers(pid=pid)
+
+
+@mcp.tool()
 def filings(
     ticker: str,
     filter: Optional[str] = None,

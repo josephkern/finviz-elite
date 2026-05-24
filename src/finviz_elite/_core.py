@@ -1,8 +1,9 @@
-import requests
+import csv
 import os
-
+from io import StringIO
 from typing import Dict, List, Optional, Tuple, Union
 
+import requests
 from dotenv import load_dotenv
 
 from ._enums import (
@@ -297,6 +298,36 @@ def portfolio(
     return _get_url(url)
 
 
+def portfolio_tickers(pid: Union[int, str]) -> List[str]:
+    """
+    Return the distinct tickers from a Finviz portfolio, in portfolio order.
+
+    Portfolios track separate lots as separate rows, so the same ticker
+    can appear several times; duplicates are collapsed via first-
+    occurrence order. Cash positions (``$CASH``) are real portfolio
+    entries and are included in the result.
+
+    The output can be fed directly to ``screener(tickers=...)`` --
+    screener silently drops any ``$``-prefixed token (including the
+    ``$CASH`` sentinel), since Finviz would otherwise strip the ``$``
+    and match the bare symbol:
+
+        screener(tickers=portfolio_tickers(pid),
+                 filters=[FilterSector.TECHNOLOGY])
+
+    Arguments:
+        pid: portfolio id, same as portfolio(). Read from the portfolio
+            URL (.../portfolio.ashx?pid=XXXXXXX).
+
+    Rate-limit note: this is one HTTP request. When chained with another
+    Finviz call, the 13s spacing between requests still applies.
+    """
+    csv_text = portfolio(pid, columns=[PortfolioColumn.TICKER])
+    reader = csv.DictReader(StringIO(csv_text))
+    tickers = [row["Ticker"] for row in reader if row.get("Ticker")]
+    return list(dict.fromkeys(tickers))
+
+
 def _build_range_token(
     metric: ScreenerRange,
     minimum: Optional[float],
@@ -401,7 +432,19 @@ def screener(
     if tickers:
         if isinstance(tickers, str):
             tickers = [tickers]
-        options += f"&t={','.join(tickers)}"
+        # Drop any '$'-prefixed token: '$CASH' is the documented Finviz
+        # portfolio-export sentinel, and other '$X' forms would be
+        # silently substituted server-side (Finviz strips the '$' and
+        # matches the bare symbol, e.g. '$CASH' -> ticker CASH, Pathward
+        # Financial Inc). If filtering empties the list, raise rather
+        # than fall through to an unrestricted whole-market scan.
+        cleaned = [t for t in tickers if not t.startswith("$")]
+        if not cleaned:
+            raise ValueError(
+                "All tickers were either '$CASH' (cash positions) or "
+                "prefixed with '$'; nothing left to screen."
+            )
+        options += f"&t={','.join(cleaned)}"
 
     if order:
         options += f"&o={'-' if descending else ''}{order.value}"
