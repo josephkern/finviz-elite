@@ -31,6 +31,7 @@ _ENUMS_BY_NAME = {
     "GroupColumn": fe.GroupColumn,
     "GroupOrder": fe.GroupOrder,
     "NewsFeed": fe.NewsFeed,
+    "OptionsType": fe.OptionsType,
     "PortfolioColumn": fe.PortfolioColumn,
     "PortfolioOrder": fe.PortfolioOrder,
     "QuotePeriod": fe.QuotePeriod,
@@ -71,6 +72,33 @@ def screener(
         order=resolve_member(fe.ScreenerOrder, order),
         descending=descending,
         raw_filters=list(raw_filters) if raw_filters else None,
+    )
+
+
+@mcp.tool()
+def options(
+    ticker: str,
+    expiration: Optional[str] = None,
+    strike: Optional[float] = None,
+    type: str = "OPTIONS_CHAIN",
+) -> str:
+    """Download an options chain as CSV.
+
+    Args:
+        ticker: Stock symbol, e.g. "MSFT".
+        expiration: Optional ISO date ("YYYY-MM-DD") for a single expiration.
+            Must match a listed expiration; arbitrary dates return a header-
+            only CSV. Omit to span every expiration (can exceed 3,000 rows).
+        strike: Optional strike price (e.g. 420.0) to filter to one strike
+            across all (or filtered) expirations.
+        type: OptionsType member name. Defaults to "OPTIONS_CHAIN".
+    """
+    gate.wait()
+    return fe.options(
+        ticker=ticker,
+        expiration=expiration,
+        strike=strike,
+        type=resolve_member(fe.OptionsType, type) or fe.OptionsType.OPTIONS_CHAIN,
     )
 
 
@@ -194,8 +222,8 @@ def list_enum(enum_name: str) -> List[str]:
     """List members of a finviz_elite enum by class name.
 
     Valid names: FilingFilter, FilingOrder, GroupBy, GroupColumn, GroupOrder,
-    NewsFeed, PortfolioColumn, PortfolioOrder, QuotePeriod, QuoteRange,
-    ScreenerColumn, ScreenerOrder, ScreenerRange.
+    NewsFeed, OptionsType, PortfolioColumn, PortfolioOrder, QuotePeriod,
+    QuoteRange, ScreenerColumn, ScreenerOrder, ScreenerRange.
     """
     cls = _ENUMS_BY_NAME.get(enum_name)
     if cls is None:

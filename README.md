@@ -5,9 +5,9 @@ endpoints, plus an optional MCP server that exposes the same endpoints as
 tools for Claude and other MCP clients.
 
 Requires a Finviz Elite subscription and the auth token attached to your
-account. The library wraps six endpoints — `screener`, `quote`, `news`,
-`groups`, `portfolio`, `filings` — with typed enum surfaces for every
-filter, column, and order option.
+account. The library wraps seven endpoints — `screener`, `quote`, `news`,
+`groups`, `portfolio`, `filings`, `options` — with typed enum surfaces for
+every filter, column, and order option.
 
 > This is an unofficial client library for users with their own Finviz Elite
 > subscription. Not affiliated with or endorsed by Finviz Financial
@@ -68,6 +68,10 @@ fe.portfolio(12345678)
 
 # Latest SEC filings for a ticker
 fe.filings("MSFT", order=fe.FilingOrder.FILING_DATE, descending=True)
+
+# Options chain (omit expiration/strike to span everything — large!)
+fe.options("MSFT", expiration="2026-06-19")
+fe.options("MSFT", strike=420.0)
 ```
 
 The screener also takes a `raw_filters` escape hatch for tokens not yet
@@ -124,6 +128,7 @@ server when prompted.
 | `groups` | Sector/industry/country/cap statistics |
 | `portfolio` | Export a Finviz portfolio |
 | `filings` | Latest SEC filings for a ticker |
+| `options` | Options chain (optionally filtered by expiration or strike) |
 | `list_filter_classes` | Enumerate every `FilterXxx` class and its members |
 | `list_enum` | List members of any non-filter enum (columns, orders, ranges, periods, etc.) |
 
