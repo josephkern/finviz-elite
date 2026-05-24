@@ -1,6 +1,15 @@
 """Python client for the Finviz Elite CSV export endpoints."""
 
-from ._core import filings, groups, news, options, portfolio, quote, screener
+from ._core import (
+    filings,
+    groups,
+    news,
+    options,
+    portfolio,
+    portfolio_tickers,
+    quote,
+    screener,
+)
 from ._enums import (
     FilingFilter,
     FilingOrder,
@@ -192,6 +201,7 @@ __all__ = [
     "news",
     "options",
     "portfolio",
+    "portfolio_tickers",
     "quote",
     "screener",
 ]

@@ -70,6 +70,11 @@ fe.news(fe.NewsFeed.STOCKS, tickers=["MSFT", "AAPL"])
 # Portfolio export (pid from .../portfolio.ashx?pid=XXX)
 fe.portfolio(12345678)
 
+# Screen your own holdings — portfolio_tickers strips $CASH and lot
+# duplicates, then feeds the screener. Two HTTP calls (13s spacing applies).
+holdings = fe.portfolio_tickers(12345678)
+fe.screener(tickers=holdings, filters=[fe.FilterSector.TECHNOLOGY])
+
 # Latest SEC filings for a ticker
 fe.filings("MSFT", order=fe.FilingOrder.FILING_DATE, descending=True)
 

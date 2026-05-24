@@ -57,3 +57,16 @@ def test_screener_tickers_omitted(capture_url):
 def test_screener_tickers_empty_list_omitted(capture_url):
     fe.screener(tickers=[])
     assert "&t=" not in capture_url["url"]
+
+
+def test_screener_rejects_dollar_prefixed_ticker(capture_url):
+    # Finviz silently substitutes $CASH -> ticker CASH (Pathward Financial Inc).
+    # Reject loudly rather than letting silent data corruption through.
+    with pytest.raises(ValueError, match=r"\$CASH"):
+        fe.screener(tickers=["$CASH", "MSFT"])
+    assert "url" not in capture_url  # request must never be built
+
+
+def test_screener_rejects_any_dollar_prefix(capture_url):
+    with pytest.raises(ValueError, match=r"portfolio_tickers"):
+        fe.screener(tickers=["$FOO"])

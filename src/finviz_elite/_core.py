@@ -1,8 +1,9 @@
-import requests
+import csv
 import os
-
+from io import StringIO
 from typing import Dict, List, Optional, Tuple, Union
 
+import requests
 from dotenv import load_dotenv
 
 from ._enums import (
@@ -297,6 +298,50 @@ def portfolio(
     return _get_url(url)
 
 
+def portfolio_tickers(
+    pid: Union[int, str],
+    *,
+    exclude_cash: bool = True,
+    dedupe: bool = True,
+) -> List[str]:
+    """
+    Return the tickers from a Finviz portfolio, in portfolio order.
+
+    Portfolios commonly contain duplicate ticker rows (separate lots
+    tracked by cost basis) and one or more ``$CASH`` sentinel rows for
+    cash positions. By default both are normalized away so the result
+    is suitable for ``screener(tickers=...)`` or ``news(tickers=...)``.
+
+    Arguments:
+        pid: portfolio id, same as portfolio(). Read from the portfolio
+            URL (.../portfolio.ashx?pid=XXXXXXX).
+        exclude_cash: drop rows where the ticker is ``$CASH`` (default
+            True). A portfolio can have multiple cash rows (e.g. USD +
+            margin); all are filtered. Important: ``screener(tickers=)``
+            rejects ``$``-prefixed tokens with ValueError, so passing
+            ``exclude_cash=False`` and then screening will raise.
+        dedupe: collapse duplicate ticker rows, preserving first-
+            occurrence order (default True). Set False to recover the
+            raw per-lot row count.
+
+    Examples:
+        tickers = portfolio_tickers(12345678)
+        screener(tickers=tickers, filters=[FilterSector.TECHNOLOGY])
+
+    Rate-limit note: this is one HTTP request. When chained with another
+    Finviz call (e.g. screener), the 13s spacing between requests still
+    applies to the caller.
+    """
+    csv_text = portfolio(pid, columns=[PortfolioColumn.TICKER])
+    reader = csv.DictReader(StringIO(csv_text))
+    tickers = [row["Ticker"] for row in reader if row.get("Ticker")]
+    if exclude_cash:
+        tickers = [t for t in tickers if t != "$CASH"]
+    if dedupe:
+        tickers = list(dict.fromkeys(tickers))
+    return tickers
+
+
 def _build_range_token(
     metric: ScreenerRange,
     minimum: Optional[float],
@@ -401,6 +446,20 @@ def screener(
     if tickers:
         if isinstance(tickers, str):
             tickers = [tickers]
+        for t in tickers:
+            if t.startswith("$"):
+                # Finviz strips the $ and matches the bare symbol, so '$CASH'
+                # silently returns a row for ticker CASH (Pathward Financial
+                # Inc, a real listed bank). Reject loudly to prevent silent
+                # data corruption when a portfolio's cash sentinel is passed
+                # through unfiltered.
+                raise ValueError(
+                    f"Ticker {t!r} is not a valid symbol. Finviz silently "
+                    f"substitutes '$CASH' for ticker 'CASH' (Pathward "
+                    f"Financial Inc); use portfolio_tickers(pid, "
+                    f"exclude_cash=True) to drop cash sentinels before "
+                    f"screening."
+                )
         options += f"&t={','.join(tickers)}"
 
     if order:

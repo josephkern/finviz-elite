@@ -192,6 +192,32 @@ def portfolio(
 
 
 @mcp.tool()
+def portfolio_tickers(
+    pid: int,
+    exclude_cash: bool = True,
+    dedupe: bool = True,
+) -> List[str]:
+    """Return the tickers in a Finviz portfolio as a list, suitable for
+    chaining into screener(tickers=...) or news(tickers=...).
+
+    Args:
+        pid: Portfolio id (read from the portfolio URL: portfolio.ashx?pid=XXX).
+        exclude_cash: Drop $CASH sentinel rows. Default True. Required True
+            if the result is being fed to screener(tickers=...), which rejects
+            $-prefixed tokens to prevent silent substitution to ticker CASH
+            (Pathward Financial Inc).
+        dedupe: Collapse duplicate ticker rows (portfolios track lots
+            separately). Default True.
+    """
+    gate.wait()
+    return fe.portfolio_tickers(
+        pid=pid,
+        exclude_cash=exclude_cash,
+        dedupe=dedupe,
+    )
+
+
+@mcp.tool()
 def filings(
     ticker: str,
     filter: Optional[str] = None,
