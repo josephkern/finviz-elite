@@ -327,6 +327,7 @@ def _build_range_token(
 def screener(
     filters: Optional[List[FilterEnum]] = None,
     ranges: Optional[Dict[ScreenerRange, Tuple[Optional[float], Optional[float]]]] = None,
+    tickers: Optional[Union[str, List[str]]] = None,
     columns: Optional[List[ScreenerColumn]] = None,
     order: Optional[ScreenerOrder] = None,
     descending: bool = False,
@@ -345,6 +346,10 @@ def screener(
             Either bound may be ``None`` for an open-ended range; both
             ``None`` skips the metric. Example:
             ``ranges={ScreenerRange.PE: (10, 20)}``.
+        tickers: optional ticker filter, a single symbol ("AAPL") or a
+            list (["MSFT", "AAPL"]). Restricts the export to the named
+            symbols. Combines with ``filters``/``ranges``: a row must
+            match both the ticker set and any filters applied.
         columns: optional subset of columns to export, as a list of
             ScreenerColumn members. The export follows the given order.
             When omitted, Finviz returns its default column set.
@@ -361,6 +366,7 @@ def screener(
     Examples:
         screener(filters=[FilterSector.TECHNOLOGY, FilterMarketCap.LARGE])
         screener(ranges={ScreenerRange.PE: (10, 20)})
+        screener(tickers=["MSFT", "AAPL", "GOOG"])
         screener(filters=[FilterSector.TECHNOLOGY],
                  ranges={ScreenerRange.BETA: (None, 1.5)})
         screener(raw_filters=["fa_div_pos"])
@@ -368,6 +374,7 @@ def screener(
 
     Example URL:
         https://elite.finviz.com/export?v=152&c=0,1,2&f=sec_technology,fa_pe_10to20
+        https://elite.finviz.com/export?v=152&t=MSFT,AAPL,GOOG
     """
     if descending and order is None:
         raise ValueError("descending=True requires an 'order' to sort by.")
@@ -390,6 +397,11 @@ def screener(
         tokens.extend(raw_filters)
     if tokens:
         options += "&f=" + ",".join(tokens)
+
+    if tickers:
+        if isinstance(tickers, str):
+            tickers = [tickers]
+        options += f"&t={','.join(tickers)}"
 
     if order:
         options += f"&o={'-' if descending else ''}{order.value}"

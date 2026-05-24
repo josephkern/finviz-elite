@@ -54,6 +54,10 @@ csv = fe.screener(
     descending=True,
 )
 
+# Or restrict the screener to a specific ticker list (e.g. your watchlist
+# or portfolio holdings) — composes with filters/ranges
+csv = fe.screener(tickers=["MSFT", "AAPL", "GOOG"])
+
 # OHLCV bars
 fe.quote("MSFT", range=fe.QuoteRange.Y1, period=fe.QuotePeriod.DAILY)
 
