@@ -46,6 +46,7 @@ _ENUMS_BY_NAME = {
 def screener(
     filters: Optional[List[str]] = None,
     ranges: Optional[Dict[str, List[Optional[float]]]] = None,
+    tickers: Optional[List[str]] = None,
     columns: Optional[List[str]] = None,
     order: Optional[str] = None,
     descending: bool = False,
@@ -59,6 +60,8 @@ def screener(
         ranges: Custom numeric ranges keyed by ScreenerRange member name,
             e.g. {"PE": [10, 20]}. Either bound may be null for open-ended.
             Use list_enum("ScreenerRange") to discover members.
+        tickers: Optional ticker list, e.g. ["MSFT", "AAPL", "GOOG"].
+            Restricts the export to the named symbols.
         columns: ScreenerColumn member names, e.g. ["TICKER", "MARKET_CAP"].
         order: ScreenerOrder member name, e.g. "MARKET_CAP".
         descending: Sort descending. Requires `order`.
@@ -68,6 +71,7 @@ def screener(
     return fe.screener(
         filters=resolve_filters(filters),
         ranges=resolve_ranges(ranges),
+        tickers=list(tickers) if tickers else None,
         columns=resolve_members(fe.ScreenerColumn, columns),
         order=resolve_member(fe.ScreenerOrder, order),
         descending=descending,
